@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AttackTile
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
   m_Sprite: {fileID: 7482667652216324306, guid: ff7b1a4e49e98bb498dc6482d53174da, type: 3}
-  m_Color: {r: 0.5999999, g: 0.23848338, b: 0.084905565, a: 1}
+  m_Color: {r: 0.7960785, g: 0.5254902, b: 0.32156864, a: 0.3137255}
   m_Transform:
     e00: 1
     e01: 0

@@ -16,7 +16,7 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        if (enemyUnit.IsAdjacentTo(playerUnit))
+        if (enemyUnit.IsInAttackRange(playerUnit))
         {
             playerUnit.TakeDamage(enemyUnit.GetAttackPower());
             turnManager.EndEnemyTurn();

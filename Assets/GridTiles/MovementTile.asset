@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MovementTile
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
   m_Sprite: {fileID: 7482667652216324306, guid: ff7b1a4e49e98bb498dc6482d53174da, type: 3}
-  m_Color: {r: 0.08508007, g: 0.4037736, b: 0.035806317, a: 1}
+  m_Color: {r: 0.39669302, g: 0.9924528, b: 0.2003631, a: 0.44705883}
   m_Transform:
     e00: 1
     e01: 0
