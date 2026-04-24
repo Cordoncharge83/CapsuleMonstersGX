@@ -196,6 +196,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   combatTilemap: {fileID: 1477658910}
   currentCellPosition: {x: 0, y: -3, z: 0}
+  maxHp: 10
+  currentHp: 10
+  attackPower: 3
 --- !u!212 &380841276
 SpriteRenderer:
   serializedVersion: 2
@@ -301,6 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
   combatTilemap: {fileID: 1477658910}
   playerUnit: {fileID: 380841275}
+  enemyUnit: {fileID: 1705193625}
   turnManager: {fileID: 548537081}
 --- !u!4 &454986553
 Transform:
@@ -1179,6 +1183,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   combatTilemap: {fileID: 1477658910}
   currentCellPosition: {x: 0, y: 2, z: 0}
+  maxHp: 8
+  currentHp: 8
+  attackPower: 2
 --- !u!212 &1705193626
 SpriteRenderer:
   serializedVersion: 2

@@ -5,6 +5,7 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Unit playerUnit;
+    [SerializeField] private Unit enemyUnit;
     [SerializeField] private TurnManager turnManager;
 
     private Camera mainCamera;
@@ -20,6 +21,7 @@ public class GridManager : MonoBehaviour
         {
             return;
         }
+
         if (Input.GetMouseButtonDown(0))
         {
             DetectClickedCell();
@@ -38,7 +40,25 @@ public class GridManager : MonoBehaviour
 
         Debug.Log($"Clicked cell: {cellPosition}");
 
+        if (enemyUnit != null && cellPosition == enemyUnit.GetCurrentCellPosition())
+        {
+            TryAttackEnemy();
+            return;
+        }
+
         playerUnit.MoveTo(cellPosition);
+        turnManager.EndPlayerTurn();
+    }
+
+    private void TryAttackEnemy()
+    {
+        if (!playerUnit.IsAdjacentTo(enemyUnit))
+        {
+            Debug.Log("Enemy is not adjacent. Cannot attack.");
+            return;
+        }
+
+        enemyUnit.TakeDamage(playerUnit.GetAttackPower());
         turnManager.EndPlayerTurn();
     }
 }

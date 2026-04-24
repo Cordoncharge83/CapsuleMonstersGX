@@ -6,8 +6,13 @@ public class Unit : MonoBehaviour
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Vector3Int currentCellPosition;
 
+    [SerializeField] private int maxHp = 10;
+    [SerializeField] private int currentHp = 10;
+    [SerializeField] private int attackPower = 3;
+
     private void Start()
     {
+        currentHp = maxHp;
         SnapToCell(currentCellPosition);
     }
 
@@ -18,14 +23,47 @@ public class Unit : MonoBehaviour
         Vector3 worldPosition = combatTilemap.GetCellCenterWorld(cellPosition);
         transform.position = worldPosition;
     }
-    public Vector3Int GetCurrentCellPosition()
-    {
-        return currentCellPosition;
-    }
 
     public void MoveTo(Vector3Int targetCellPosition)
     {
         SnapToCell(targetCellPosition);
     }
 
+    public Vector3Int GetCurrentCellPosition()
+    {
+        return currentCellPosition;
+    }
+
+    public int GetAttackPower()
+    {
+        return attackPower;
+    }
+
+    public bool IsAdjacentTo(Unit otherUnit)
+    {
+        Vector3Int otherCell = otherUnit.GetCurrentCellPosition();
+
+        int distanceX = Mathf.Abs(currentCellPosition.x - otherCell.x);
+        int distanceY = Mathf.Abs(currentCellPosition.y - otherCell.y);
+
+        return distanceX + distanceY == 1;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHp -= damage;
+
+        Debug.Log($"{gameObject.name} took {damage} damage. HP: {currentHp}/{maxHp}");
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log($"{gameObject.name} was defeated.");
+        Destroy(gameObject);
+    }
 }

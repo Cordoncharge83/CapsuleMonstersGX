@@ -10,6 +10,25 @@ public class EnemyAI : MonoBehaviour
 
     public void TakeTurn()
     {
+        if (enemyUnit == null || playerUnit == null)
+        {
+            turnManager.EndEnemyTurn();
+            return;
+        }
+
+        if (enemyUnit.IsAdjacentTo(playerUnit))
+        {
+            playerUnit.TakeDamage(enemyUnit.GetAttackPower());
+            turnManager.EndEnemyTurn();
+            return;
+        }
+
+        MoveTowardPlayer();
+        turnManager.EndEnemyTurn();
+    }
+
+    private void MoveTowardPlayer()
+    {
         Vector3Int enemyCell = enemyUnit.GetCurrentCellPosition();
         Vector3Int playerCell = playerUnit.GetCurrentCellPosition();
 
@@ -33,7 +52,5 @@ public class EnemyAI : MonoBehaviour
         {
             enemyUnit.MoveTo(targetCell);
         }
-
-        turnManager.EndEnemyTurn();
     }
 }
