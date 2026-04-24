@@ -58,9 +58,9 @@ public class GridManager : MonoBehaviour
 
     private void TryAttackEnemy()
     {
-        if (!playerUnit.IsAdjacentTo(enemyUnit))
+        if (!playerUnit.IsInAttackRange(enemyUnit))
         {
-            Debug.Log("Enemy is not adjacent. Cannot attack.");
+            Debug.Log("Enemy is out of range. Cannot attack.");
             return;
         }
 

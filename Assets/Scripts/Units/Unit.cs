@@ -10,6 +10,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private int currentHp = 10;
     [SerializeField] private int attackPower = 3;
     [SerializeField] private int moveRange = 3;
+    [SerializeField] private int attackRange = 1;
 
     private void Start()
     {
@@ -50,6 +51,7 @@ public class Unit : MonoBehaviour
         return attackPower;
     }
 
+    // Potentially Obsolete
     public bool IsAdjacentTo(Unit otherUnit)
     {
         Vector3Int otherCell = otherUnit.GetCurrentCellPosition();
@@ -58,6 +60,18 @@ public class Unit : MonoBehaviour
         int distanceY = Mathf.Abs(currentCellPosition.y - otherCell.y);
 
         return distanceX + distanceY == 1;
+    }
+
+    public bool IsInAttackRange(Unit otherUnit)
+    {
+        Vector3Int otherCell = otherUnit.GetCurrentCellPosition();
+
+        int distanceX = Mathf.Abs(currentCellPosition.x - otherCell.x);
+        int distanceY = Mathf.Abs(currentCellPosition.y - otherCell.y);
+
+        int totalDistance = distanceX + distanceY;
+
+        return totalDistance <= attackRange;
     }
 
     public void TakeDamage(int damage)

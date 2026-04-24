@@ -199,6 +199,8 @@ MonoBehaviour:
   maxHp: 10
   currentHp: 10
   attackPower: 3
+  moveRange: 3
+  attackRange: 2
 --- !u!212 &380841276
 SpriteRenderer:
   serializedVersion: 2
@@ -1186,6 +1188,8 @@ MonoBehaviour:
   maxHp: 8
   currentHp: 8
   attackPower: 2
+  moveRange: 3
+  attackRange: 1
 --- !u!212 &1705193626
 SpriteRenderer:
   serializedVersion: 2
