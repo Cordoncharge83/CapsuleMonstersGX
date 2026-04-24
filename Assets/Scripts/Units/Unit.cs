@@ -51,6 +51,16 @@ public class Unit : MonoBehaviour
         return attackPower;
     }
 
+    public int GetMoveRange()
+    {
+        return moveRange;
+    }
+
+    public int GetAttackRange()
+    {
+        return attackRange;
+    }
+
     // Potentially Obsolete
     public bool IsAdjacentTo(Unit otherUnit)
     {
