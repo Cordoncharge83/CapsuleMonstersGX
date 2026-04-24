@@ -5,6 +5,7 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Unit playerUnit;
+    [SerializeField] private TurnManager turnManager;
 
     private Camera mainCamera;
 
@@ -15,6 +16,10 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
+        if (!turnManager.IsPlayerTurn())
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(0))
         {
             DetectClickedCell();
@@ -34,5 +39,6 @@ public class GridManager : MonoBehaviour
         Debug.Log($"Clicked cell: {cellPosition}");
 
         playerUnit.MoveTo(cellPosition);
+        turnManager.EndPlayerTurn();
     }
 }
