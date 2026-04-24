@@ -3,7 +3,8 @@ using UnityEngine.Tilemaps;
 
 public class GridManager : MonoBehaviour
 {
-    [SerializeField] private Tilemap groundTilemap;
+    [SerializeField] private Tilemap combatTilemap;
+    [SerializeField] private Unit playerUnit;
 
     private Camera mainCamera;
 
@@ -23,8 +24,15 @@ public class GridManager : MonoBehaviour
     private void DetectClickedCell()
     {
         Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int cellPosition = groundTilemap.WorldToCell(mouseWorldPosition);
+        Vector3Int cellPosition = combatTilemap.WorldToCell(mouseWorldPosition);
+
+        if (!combatTilemap.HasTile(cellPosition))
+        {
+            return;
+        }
 
         Debug.Log($"Clicked cell: {cellPosition}");
+
+        playerUnit.MoveTo(cellPosition);
     }
 }

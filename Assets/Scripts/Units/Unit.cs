@@ -18,4 +18,8 @@ public class Unit : MonoBehaviour
         Vector3 worldPosition = combatTilemap.GetCellCenterWorld(cellPosition);
         transform.position = worldPosition;
     }
+    public void MoveTo(Vector3Int targetCellPosition)
+    {
+        SnapToCell(targetCellPosition);
+    }
 }
