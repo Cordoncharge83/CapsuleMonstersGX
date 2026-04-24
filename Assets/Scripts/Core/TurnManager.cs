@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
+
     public enum TurnState
     {
         PlayerTurn,
         EnemyTurn
     }
+
+    [SerializeField] private EnemyAI enemyAI;
 
     public TurnState currentTurn = TurnState.PlayerTurn;
 
@@ -19,6 +22,8 @@ public class TurnManager : MonoBehaviour
     {
         currentTurn = TurnState.EnemyTurn;
         Debug.Log("Enemy Turn");
+
+        enemyAI.TakeTurn();
     }
 
     public void EndEnemyTurn()
