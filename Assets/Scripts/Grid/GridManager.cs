@@ -46,6 +46,12 @@ public class GridManager : MonoBehaviour
             return;
         }
 
+        if (!playerUnit.CanMoveTo(cellPosition))
+        {
+            Debug.Log("Target cell is outside movement range.");
+            return;
+        }
+
         playerUnit.MoveTo(cellPosition);
         turnManager.EndPlayerTurn();
     }

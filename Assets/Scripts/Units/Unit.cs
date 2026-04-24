@@ -9,6 +9,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private int maxHp = 10;
     [SerializeField] private int currentHp = 10;
     [SerializeField] private int attackPower = 3;
+    [SerializeField] private int moveRange = 3;
 
     private void Start()
     {
@@ -27,6 +28,16 @@ public class Unit : MonoBehaviour
     public void MoveTo(Vector3Int targetCellPosition)
     {
         SnapToCell(targetCellPosition);
+    }
+
+    public bool CanMoveTo(Vector3Int targetCellPosition)
+    {
+        int distanceX = Mathf.Abs(currentCellPosition.x - targetCellPosition.x);
+        int distanceY = Mathf.Abs(currentCellPosition.y - targetCellPosition.y);
+
+        int totalDistance = distanceX + distanceY;
+
+        return totalDistance <= moveRange;
     }
 
     public Vector3Int GetCurrentCellPosition()
