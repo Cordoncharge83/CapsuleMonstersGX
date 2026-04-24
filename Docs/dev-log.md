@@ -52,6 +52,17 @@ Build a minimal playable tactical prototype:
 
 ---
 
+## Session 2 — Movement and Attack updates
+ 
+- Added MOV-based movement range
+- Added RNG-based attack range
+- Added movement and attack tile highlighting
+- Added player unit selection flow
+- Updated enemy AI to respect attack and movement range
+- Current limitation: highlight visuals overlap and will be polished later
+
+---
+
 ## Current State
 
 The game has a complete basic loop:
@@ -75,15 +86,8 @@ This is the first playable version of the tactical system.
 
 ---
 
-## Next Steps (Session 2)
-
-- Add movement range (MOV stat)
-- Add attack range (RNG stat)
-- Improve enemy behavior
-- Add visual feedback (tile highlights, selection)
-
----
-
 ## Notes
 
 Focus is on building a solid, testable tactical system before adding GX-specific mechanics like fusion.
+
+
