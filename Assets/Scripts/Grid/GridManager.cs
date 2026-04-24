@@ -61,20 +61,19 @@ public class GridManager : MonoBehaviour
         if (enemyUnit != null && cellPosition == enemyUnit.GetCurrentCellPosition())
         {
             TryAttackEnemy();
-            isPlayerSelected = false;
-            highlightTilemap.ClearAllTiles();
+            DeselectPlayer();
             return;
         }
 
         if (!playerUnit.CanMoveTo(cellPosition))
         {
             Debug.Log("Target cell is outside movement range.");
+            DeselectPlayer();
             return;
         }
 
         playerUnit.MoveTo(cellPosition);
-        isPlayerSelected = false;
-        highlightTilemap.ClearAllTiles();
+        DeselectPlayer();
         turnManager.EndPlayerTurn();
     }
 
@@ -144,5 +143,11 @@ public class GridManager : MonoBehaviour
 
         enemyUnit.TakeDamage(playerUnit.GetAttackPower());
         turnManager.EndPlayerTurn();
+    }
+
+    private void DeselectPlayer()
+    {
+        isPlayerSelected = false;
+        highlightTilemap.ClearAllTiles();
     }
 }
