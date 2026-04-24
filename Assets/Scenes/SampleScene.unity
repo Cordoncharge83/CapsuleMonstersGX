@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   combatTilemap: {fileID: 1477658910}
-  currentCellPosition: {x: 0, y: 2, z: 0}
+  currentCellPosition: {x: 0, y: -3, z: 0}
 --- !u!212 &380841276
 SpriteRenderer:
   serializedVersion: 2
@@ -299,7 +299,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7668de075eaa1564d958267ffd29ddec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
-  groundTilemap: {fileID: 1477658910}
+  combatTilemap: {fileID: 1477658910}
+  playerUnit: {fileID: 380841275}
 --- !u!4 &454986553
 Transform:
   m_ObjectHideFlags: 0
