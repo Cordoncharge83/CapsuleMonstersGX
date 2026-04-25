@@ -28,7 +28,7 @@ Build a minimal playable tactical prototype:
 
 ### 3. Player Movement
 - Click on tile → player moves instantly
-- Movement currently unrestricted (no range limit yet)
+- Movement initially unrestricted (teleport-style)
 
 ### 4. Turn System
 - Implemented TurnManager
@@ -39,7 +39,7 @@ Build a minimal playable tactical prototype:
 
 ### 5. Enemy AI
 - Basic AI:
-  - Moves 1 tile toward player
+  - Moves toward player
   - Chooses direction based on distance
 
 ### 6. Combat System
@@ -52,42 +52,89 @@ Build a minimal playable tactical prototype:
 
 ---
 
-## Session 2 — Movement and Attack updates
- 
-- Added MOV-based movement range
-- Added RNG-based attack range
-- Added movement and attack tile highlighting
-- Added player unit selection flow
-- Updated enemy AI to respect attack and movement range
-- Current limitation: highlight visuals overlap and will be polished later
+## Session 2 — Tactical System Expansion
+
+### Objective
+Transform the prototype into a true tactical system:
+- Movement and attack ranges
+- Visual feedback (tile highlighting)
+- Multi-unit support
+- Improved enemy AI
+
+---
+
+## Systems Implemented
+
+### 1. Movement & Attack Range
+- Added **MOV (movement range)** using Manhattan distance
+- Added **RNG (attack range)** for melee and ranged combat
+- Movement restricted to valid tiles within range
+- Attacks allowed only within attack range
+
+### 2. Tile Highlighting
+- Added a dedicated **Highlight Tilemap**
+- Movement tiles (green) show valid movement range
+- Attack tiles (red/orange) show valid attack range
+- Highlights update based on selected unit
+
+### 3. Unit Selection System
+- Player must select a unit before acting
+- Clicking a unit:
+  - Selects it
+  - Displays movement and attack range
+- Clicking another unit:
+  - Instantly switches selection
+- Clicking invalid tile:
+  - Cancels selection
+
+### 4. Multi-Unit System
+- Replaced single unit references with:
+  - `List<Unit> playerUnits`
+  - `List<Unit> enemyUnits`
+- Player can control multiple units
+- Can attack any enemy unit in range
+
+### 5. Occupancy System
+- Prevented units from moving onto occupied tiles
+- Applies to both player and enemy units
+- Ensures valid tactical positioning
+
+### 6. Enemy AI Improvements
+- AI now supports multiple enemies
+- Each enemy:
+  - Targets the **closest player unit**
+  - Attacks if within range
+  - Moves toward target using MOV
+- AI respects:
+  - Attack range (RNG)
+  - Movement range (MOV)
+  - Occupied tiles
 
 ---
 
 ## Current State
 
-The game has a complete basic loop:
-- Player moves or attacks
-- Turn ends
-- Enemy moves or attacks
-- Turn returns to player
-
-This is the first playable version of the tactical system.
+The game now supports **multi-unit tactical gameplay**:
+This is a **complete tactical core system**.
 
 ---
 
 ## Known Limitations
 
-- No movement range (teleport movement)
-- No attack range beyond adjacency
-- No pathfinding
-- No animations or feedback
-- No UI
-- No fusion system yet
+- No pathfinding (straight-line movement only)
+- Highlight visuals overlap (movement vs attack)
+- Enemy actions happen instantly (no animation/sequence)
+- No UI (health bars, action menus, etc.)
+- No terrain effects or obstacles
+- No capsule / fusion systems yet
 
 ---
 
 ## Notes
 
-Focus is on building a solid, testable tactical system before adding GX-specific mechanics like fusion.
+The project has successfully transitioned from a prototype to a **functional tactical engine**.
 
-
+Next focus:
+- Capsule-style deployment phase
+- Pre-battle setup
+- Foundation for fusion mechanics
