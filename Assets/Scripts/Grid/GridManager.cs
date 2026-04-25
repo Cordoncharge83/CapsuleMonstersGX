@@ -84,6 +84,10 @@ public class GridManager : MonoBehaviour
             Debug.Log("Player selected.");
             return;
         }
+        if (selectedUnit == null)
+        {
+            return;
+        }
 
         Unit clickedEnemy = GetEnemyUnitAtCell(cellPosition);
 
@@ -198,7 +202,7 @@ public class GridManager : MonoBehaviour
 
     private void DeselectPlayer()
     {
-        isPlayerSelected = false;
+        selectedUnit = null;
         highlightTilemap.ClearAllTiles();
     }
 
