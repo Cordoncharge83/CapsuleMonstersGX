@@ -10,8 +10,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TileBase attackHighlightTile;
 
     [SerializeField] private List<Unit> playerUnits;
-    
-    [SerializeField] private Unit enemyUnit;
+    [SerializeField] private List<Unit> enemyUnits;
+
     [SerializeField] private TurnManager turnManager;
 
     private Unit selectedUnit;
@@ -67,9 +67,11 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        if (enemyUnit != null && cellPosition == enemyUnit.GetCurrentCellPosition())
+        Unit clickedEnemy = GetEnemyUnitAtCell(cellPosition);
+
+        if (clickedEnemy != null)
         {
-            TryAttackEnemy();
+            TryAttackEnemy(clickedEnemy);
             DeselectPlayer();
             return;
         }
@@ -91,6 +93,19 @@ public class GridManager : MonoBehaviour
         foreach (Unit unit in playerUnits)
         {
             if (unit.GetCurrentCellPosition() == cellPosition)
+            {
+                return unit;
+            }
+        }
+
+        return null;
+    }
+
+    private Unit GetEnemyUnitAtCell(Vector3Int cellPosition)
+    {
+        foreach (Unit unit in enemyUnits)
+        {
+            if (unit != null && unit.GetCurrentCellPosition() == cellPosition)
             {
                 return unit;
             }
@@ -150,15 +165,15 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void TryAttackEnemy()
+    private void TryAttackEnemy(Unit targetEnemy)
     {
-        if (!selectedUnit.IsInAttackRange(enemyUnit))
+        if (!selectedUnit.IsInAttackRange(targetEnemy))
         {
-            Debug.Log("Enemy is out of range. Cannot attack.");
+            Debug.Log("Enemy is outside attack range. Cannot attack.");
             return;
         }
 
-        enemyUnit.TakeDamage(selectedUnit.GetAttackPower());
+        targetEnemy.TakeDamage(selectedUnit.GetAttackPower());
         turnManager.EndPlayerTurn();
     }
 
