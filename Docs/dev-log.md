@@ -261,3 +261,97 @@ Dark > Light
   - Strong → 1.5x
   - Weak → 0.5x
   - Neutral → 1.0x
+  
+ 
+---
+
+## Session 5 — Enemy Setup & Match Structure
+
+### Objective
+Move enemy setup from static scene placement to a dynamic, data-driven system:
+- Enemies are spawned from prefabs
+- Battle setups are configurable and repeatable
+- Scene no longer contains pre-placed combat units
+
+---
+
+## Systems Implemented
+
+### 1. Enemy Prefabs
+- Converted enemy units into reusable prefabs
+- Each prefab defines:
+  - Stats (HP, ATK, MOV, RNG)
+  - Element type
+  - Team (Enemy)
+
+---
+
+### 2. Enemy Spawn Data
+- Created `EnemySpawnData` structure:
+  - Enemy prefab
+  - Spawn cell position
+- Allows defining battle layouts directly in Inspector
+
+---
+
+### 3. EnemySetupManager
+- Implemented a manager to handle enemy spawning
+- On scene start:
+  - Instantiates enemy prefabs
+  - Snaps them to predefined grid cells
+  - Registers them in:
+    - `GridManager`
+    - `EnemyAI`
+
+---
+
+### 4. Dynamic Unit Registration
+- All units (player + enemy) are now:
+  - Spawned dynamically
+  - Registered at runtime
+- Removed reliance on scene-placed units
+
+---
+
+### 5. Clean Scene Architecture
+- Scene now contains only managers and environment:
+  - No pre-placed player or enemy units
+- Ensures:
+  - Consistent match initialization
+  - Easier level design and testing
+
+---
+
+## Current State
+
+The game now supports a complete structured flow:
+Scene start
+→ EnemySetupManager spawns enemies
+→ Player enters placement phase
+→ Player places units via capsules
+→ Battle phase begins
+→ Tactical combat with multiple units and elements
+
+
+This system allows battles to be fully defined and reproduced.
+
+---
+
+## Known Limitations
+
+- Enemy placement is fixed (no variation/randomness)
+- No enemy capsule system yet
+- No pre-battle UI or preview
+- AI does not consider element advantage
+- No level progression or match selection system
+
+---
+
+## Notes
+
+The game now has a complete and scalable battle setup pipeline.
+
+This prepares the project for:
+- Level design
+- Enemy variety and encounter design
+- Future systems like fusion and abilities
