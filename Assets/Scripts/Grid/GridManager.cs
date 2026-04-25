@@ -254,5 +254,11 @@ public class GridManager : MonoBehaviour
         }
 
         capsuleManager.PlaceNextCapsule(cellPosition);
+
+        if (!capsuleManager.HasCapsulesLeft())
+        {
+            Debug.Log("All units placed. Starting battle.");
+            currentPhase = GamePhase.Battle;
+        }
     }
 }
