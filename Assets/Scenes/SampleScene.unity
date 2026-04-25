@@ -811,6 +811,8 @@ MonoBehaviour:
   combatTilemap: {fileID: 1477658910}
   capsuleUnitPrefabs:
   - {fileID: 2679721571291341281, guid: 10e89eea05b513e4bac9175b47a7a288, type: 3}
+  - {fileID: 2679721571291341281, guid: 10e89eea05b513e4bac9175b47a7a288, type: 3}
+  - {fileID: 2679721571291341281, guid: 10e89eea05b513e4bac9175b47a7a288, type: 3}
   enemyAI: {fileID: 1369665381}
   gridManager: {fileID: 454986552}
 --- !u!4 &1423983053
