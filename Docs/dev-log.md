@@ -224,3 +224,40 @@ This system establishes the foundation for:
 - Future fusion mechanics
 
 The game now has a clear identity aligned with Capsule Monsters gameplay.
+
+---
+
+## Session 4 — Element System (Combat Depth)
+
+### Objective
+Introduce elemental interactions to make combat more strategic:
+- Units gain elemental identity
+- Damage varies depending on matchups
+- Adds decision-making to targeting and positioning
+
+---
+
+## Systems Implemented
+
+### 1. Element Type System
+- Created `ElementType` enum:
+  - Fire, Water, Wind, Earth, Light, Dark
+- Each unit now has an assigned element
+- Elements are configured via Inspector (prefabs and enemies)
+
+---
+
+### 2. Element Effectiveness Logic
+- Implemented `ElementSystem`
+- Defines damage multipliers based on matchups:
+Fire > Wind
+Wind > Earth
+Earth > Water
+Water > Fire
+
+Light > Dark
+Dark > Light
+- Multipliers:
+  - Strong → 1.5x
+  - Weak → 0.5x
+  - Neutral → 1.0x
