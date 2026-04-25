@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,9 +9,12 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TileBase moveHighlightTile;
     [SerializeField] private TileBase attackHighlightTile;
 
-    [SerializeField] private Unit playerUnit;
+    [SerializeField] private List<Unit> playerUnits;
+    
     [SerializeField] private Unit enemyUnit;
     [SerializeField] private TurnManager turnManager;
+
+    private Unit selectedUnit;
 
     private Camera mainCamera;
     private bool isPlayerSelected = false;
@@ -47,11 +51,16 @@ public class GridManager : MonoBehaviour
 
         if (!isPlayerSelected)
         {
-            if (IsPlayerCell(cellPosition))
+            Unit clickedUnit = GetPlayerUnitAtCell(cellPosition);
+
+            if (clickedUnit != null)
             {
+                selectedUnit = clickedUnit;
                 isPlayerSelected = true;
+
                 ShowMovementRange();
                 ShowAttackRange();
+
                 Debug.Log("Player selected.");
             }
 
@@ -65,29 +74,37 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        if (!playerUnit.CanMoveTo(cellPosition))
+        if (!selectedUnit.CanMoveTo(cellPosition))
         {
             Debug.Log("Target cell is outside movement range.");
             DeselectPlayer();
             return;
         }
 
-        playerUnit.MoveTo(cellPosition);
+        selectedUnit.MoveTo(cellPosition);
         DeselectPlayer();
         turnManager.EndPlayerTurn();
     }
 
-    private bool IsPlayerCell(Vector3Int cellPosition)
+    private Unit GetPlayerUnitAtCell(Vector3Int cellPosition)
     {
-        return cellPosition == playerUnit.GetCurrentCellPosition();
+        foreach (Unit unit in playerUnits)
+        {
+            if (unit.GetCurrentCellPosition() == cellPosition)
+            {
+                return unit;
+            }
+        }
+
+        return null;
     }
 
     private void ShowMovementRange()
     {
         highlightTilemap.ClearAllTiles();
 
-        Vector3Int currentPosition = playerUnit.GetCurrentCellPosition();
-        int range = playerUnit.GetMoveRange();
+        Vector3Int currentPosition = selectedUnit.GetCurrentCellPosition();
+        int range = selectedUnit.GetMoveRange();
 
         for (int x = -range; x <= range; x++)
         {
@@ -111,8 +128,8 @@ public class GridManager : MonoBehaviour
 
     private void ShowAttackRange()
     {
-        Vector3Int currentPosition = playerUnit.GetCurrentCellPosition();
-        int range = playerUnit.GetAttackRange();
+        Vector3Int currentPosition = selectedUnit.GetCurrentCellPosition();
+        int range = selectedUnit.GetAttackRange();
 
         for (int x = -range; x <= range; x++)
         {
@@ -135,13 +152,13 @@ public class GridManager : MonoBehaviour
 
     private void TryAttackEnemy()
     {
-        if (!playerUnit.IsInAttackRange(enemyUnit))
+        if (!selectedUnit.IsInAttackRange(enemyUnit))
         {
             Debug.Log("Enemy is out of range. Cannot attack.");
             return;
         }
 
-        enemyUnit.TakeDamage(playerUnit.GetAttackPower());
+        enemyUnit.TakeDamage(selectedUnit.GetAttackPower());
         turnManager.EndPlayerTurn();
     }
 
