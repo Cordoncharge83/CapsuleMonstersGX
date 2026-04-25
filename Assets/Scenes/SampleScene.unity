@@ -202,6 +202,7 @@ MonoBehaviour:
   attackPower: 3
   moveRange: 3
   attackRange: 2
+  team: 0
 --- !u!212 &380841276
 SpriteRenderer:
   serializedVersion: 2
@@ -1321,6 +1322,7 @@ MonoBehaviour:
   attackPower: 2
   moveRange: 2
   attackRange: 1
+  team: 1
 --- !u!212 &1705193626
 SpriteRenderer:
   serializedVersion: 2

@@ -3,6 +3,13 @@ using UnityEngine.Tilemaps;
 
 public class Unit : MonoBehaviour
 {
+
+    public enum Team
+    {
+        Player,
+        Enemy
+    }
+
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Vector3Int currentCellPosition;
 
@@ -11,6 +18,9 @@ public class Unit : MonoBehaviour
     [SerializeField] private int attackPower = 3;
     [SerializeField] private int moveRange = 3;
     [SerializeField] private int attackRange = 1;
+
+    [SerializeField] private Team team;
+
 
     private void Start()
     {
@@ -59,6 +69,11 @@ public class Unit : MonoBehaviour
     public int GetAttackRange()
     {
         return attackRange;
+    }
+
+    public Team GetTeam()
+    {
+        return team;
     }
 
     // Potentially Obsolete
