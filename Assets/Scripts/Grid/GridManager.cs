@@ -13,6 +13,8 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private GamePhase currentPhase = GamePhase.Placement;
 
+    [SerializeField] private int playerPlacementMaxY = 0;
+
     [SerializeField] private CapsuleManager capsuleManager;
 
     [SerializeField] private Tilemap combatTilemap;
@@ -229,6 +231,12 @@ public class GridManager : MonoBehaviour
     {
         if (!combatTilemap.HasTile(cellPosition))
         {
+            return;
+        }
+
+        if (cellPosition.y > playerPlacementMaxY)
+        {
+            Debug.Log("Cannot place unit outside player placement zone.");
             return;
         }
 
