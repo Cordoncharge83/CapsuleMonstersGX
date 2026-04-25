@@ -254,9 +254,7 @@ MonoBehaviour:
   moveHighlightTile: {fileID: 11400000, guid: 8487b7c8fbb6f6f408815ec7af58ce88, type: 2}
   attackHighlightTile: {fileID: 11400000, guid: 8d22f00c52179e84395054fd610fdd87, type: 2}
   playerUnits: []
-  enemyUnits:
-  - {fileID: 0}
-  - {fileID: 0}
+  enemyUnits: []
   turnManager: {fileID: 548537081}
 --- !u!4 &454986553
 Transform:
@@ -696,12 +694,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18bfebf52300e1e47b36ec467fbbebc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  enemyUnits:
-  - {fileID: 0}
-  - {fileID: 0}
-  playerUnits:
-  - {fileID: 0}
-  - {fileID: 0}
+  enemyUnits: []
+  playerUnits: []
   combatTilemap: {fileID: 1477658910}
   turnManager: {fileID: 548537081}
 --- !u!4 &1369665382
