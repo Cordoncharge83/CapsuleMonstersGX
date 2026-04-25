@@ -211,6 +211,11 @@ public class GridManager : MonoBehaviour
         playerUnits.Add(unit);
     }
 
+    public void AddEnemyUnit(Unit unit)
+    {
+        enemyUnits.Add(unit);
+    }
+
     private bool IsCellOccupied(Vector3Int cellPosition)
     {
         foreach (Unit unit in playerUnits)
