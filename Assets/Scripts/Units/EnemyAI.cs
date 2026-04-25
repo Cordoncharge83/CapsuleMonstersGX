@@ -129,4 +129,9 @@ public class EnemyAI : MonoBehaviour
 
         return false;
     }
+
+    public void AddPlayerUnit(Unit unit)
+    {
+        playerUnits.Add(unit);
+    }
 }

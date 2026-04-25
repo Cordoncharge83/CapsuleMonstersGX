@@ -76,6 +76,11 @@ public class Unit : MonoBehaviour
         return team;
     }
 
+    public void SetCombatTilemap(Tilemap tilemap)
+    {
+        combatTilemap = tilemap;
+    }
+
     // Potentially Obsolete
     public bool IsAdjacentTo(Unit otherUnit)
     {

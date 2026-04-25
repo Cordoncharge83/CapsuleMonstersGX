@@ -4,6 +4,17 @@ using UnityEngine.Tilemaps;
 
 public class GridManager : MonoBehaviour
 {
+
+    private enum GamePhase
+    {
+        Placement,
+        Battle
+    }
+
+    [SerializeField] private GamePhase currentPhase = GamePhase.Placement;
+
+    [SerializeField] private CapsuleManager capsuleManager;
+
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Tilemap highlightTilemap;
     [SerializeField] private TileBase moveHighlightTile;
@@ -39,8 +50,16 @@ public class GridManager : MonoBehaviour
 
     private void DetectClickedCell()
     {
+
+
         Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPosition = combatTilemap.WorldToCell(mouseWorldPosition);
+
+        if (currentPhase == GamePhase.Placement)
+        {
+            HandlePlacement(cellPosition);
+            return;
+        }
 
         if (!combatTilemap.HasTile(cellPosition))
         {
@@ -89,7 +108,7 @@ public class GridManager : MonoBehaviour
     {
         foreach (Unit unit in playerUnits)
         {
-            if (unit.GetCurrentCellPosition() == cellPosition)
+            if (unit != null && unit.GetCurrentCellPosition() == cellPosition)
             {
                 return unit;
             }
@@ -180,6 +199,11 @@ public class GridManager : MonoBehaviour
         highlightTilemap.ClearAllTiles();
     }
 
+    public void AddPlayerUnit(Unit unit)
+    {
+        playerUnits.Add(unit);
+    }
+
     private bool IsCellOccupied(Vector3Int cellPosition)
     {
         foreach (Unit unit in playerUnits)
@@ -199,5 +223,28 @@ public class GridManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void HandlePlacement(Vector3Int cellPosition)
+    {
+        if (!combatTilemap.HasTile(cellPosition))
+        {
+            return;
+        }
+
+        if (IsCellOccupied(cellPosition))
+        {
+            Debug.Log("Tile occupied.");
+            return;
+        }
+
+        if (!capsuleManager.HasCapsulesLeft())
+        {
+            Debug.Log("All units placed. Starting battle.");
+            currentPhase = GamePhase.Battle;
+            return;
+        }
+
+        capsuleManager.PlaceNextCapsule(cellPosition);
     }
 }
