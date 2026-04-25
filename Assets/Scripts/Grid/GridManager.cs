@@ -76,9 +76,9 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        if (!selectedUnit.CanMoveTo(cellPosition))
+        if (!selectedUnit.CanMoveTo(cellPosition) || IsCellOccupied(cellPosition))
         {
-            Debug.Log("Target cell is outside movement range.");
+            Debug.Log("Invalid move.");
             DeselectPlayer();
             return;
         }
@@ -181,5 +181,26 @@ public class GridManager : MonoBehaviour
     {
         isPlayerSelected = false;
         highlightTilemap.ClearAllTiles();
+    }
+
+    private bool IsCellOccupied(Vector3Int cellPosition)
+    {
+        foreach (Unit unit in playerUnits)
+        {
+            if (unit != null && unit.GetCurrentCellPosition() == cellPosition)
+            {
+                return true;
+            }
+        }
+
+        foreach (Unit unit in enemyUnits)
+        {
+            if (unit != null && unit.GetCurrentCellPosition() == cellPosition)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
