@@ -138,3 +138,89 @@ Next focus:
 - Capsule-style deployment phase
 - Pre-battle setup
 - Foundation for fusion mechanics
+
+---
+
+## Session 3 — Capsule System (Core Gameplay Loop)
+
+### Objective
+Introduce capsule-based gameplay by adding a placement phase before battle:
+- Units are spawned dynamically instead of pre-placed
+- Player chooses where to deploy units before combat begins
+
+---
+
+## Systems Implemented
+
+### 1. Capsule System (Basic)
+- Introduced `CapsuleManager`
+- Capsules act as a source of unit prefabs
+- Each capsule spawns a unit instantly on placement
+- Units are instantiated dynamically and added to the game
+
+---
+
+### 2. Placement Phase
+- Added a new game phase:
+  - `Placement`
+  - `Battle`
+- During Placement:
+  - Player clicks valid tiles to place units
+  - Units are spawned from capsule list
+- After all capsules are placed:
+  - Game transitions automatically to Battle phase
+
+---
+
+### 3. Placement Rules
+- Units can only be placed:
+  - On valid grid tiles
+  - On unoccupied tiles
+  - Within a defined player zone (bottom half of grid)
+- Prevents invalid or unfair starting positions
+
+---
+
+### 4. Dynamic Unit Registration
+- Spawned units are:
+  - Added to `playerUnits` list (GridManager)
+  - Registered to `EnemyAI` as valid targets
+- Ensures full integration with combat and AI systems
+
+---
+
+### 5. Multi-Capsule Support
+- CapsuleManager supports multiple unit prefabs
+- Player can place several units before battle
+- Each placement consumes one capsule
+
+---
+
+## Current State
+
+The game now supports a complete gameplay loop:
+
+This marks the transition from a prototype to a **core gameplay experience**.
+
+---
+
+## Known Limitations
+
+- Capsules are not visual objects (instant spawn only)
+- No capsule selection UI (predefined order)
+- No placement preview or feedback UI
+- No animations for spawning or transitions
+- Enemy units are still pre-placed (no enemy capsules yet)
+- No advanced AI positioning logic
+- No element or synergy systems yet
+
+---
+
+## Notes
+
+This system establishes the foundation for:
+- Capsule types (standard, rare, fusion)
+- Pre-battle strategy
+- Future fusion mechanics
+
+The game now has a clear identity aligned with Capsule Monsters gameplay.
