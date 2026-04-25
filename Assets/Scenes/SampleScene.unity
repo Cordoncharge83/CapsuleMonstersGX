@@ -157,6 +157,7 @@ MonoBehaviour:
   moveRange: 2
   attackRange: 1
   team: 1
+  elementType: 1
 --- !u!212 &232330380
 SpriteRenderer:
   serializedVersion: 2
@@ -811,8 +812,8 @@ MonoBehaviour:
   combatTilemap: {fileID: 1477658910}
   capsuleUnitPrefabs:
   - {fileID: 2679721571291341281, guid: 10e89eea05b513e4bac9175b47a7a288, type: 3}
-  - {fileID: 2679721571291341281, guid: 10e89eea05b513e4bac9175b47a7a288, type: 3}
-  - {fileID: 2679721571291341281, guid: 10e89eea05b513e4bac9175b47a7a288, type: 3}
+  - {fileID: 2679721571291341281, guid: 2c65766195aea4141a372d78c1bc3336, type: 3}
+  - {fileID: 2679721571291341281, guid: c86b5c6b51a3c714a921295886d145a0, type: 3}
   enemyAI: {fileID: 1369665381}
   gridManager: {fileID: 454986552}
 --- !u!4 &1423983053
@@ -1443,6 +1444,7 @@ MonoBehaviour:
   moveRange: 2
   attackRange: 1
   team: 1
+  elementType: 0
 --- !u!212 &1705193626
 SpriteRenderer:
   serializedVersion: 2

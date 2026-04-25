@@ -21,6 +21,8 @@ public class Unit : MonoBehaviour
 
     [SerializeField] private Team team;
 
+    [SerializeField] private ElementType elementType;
+
 
     private void Start()
     {
@@ -74,6 +76,11 @@ public class Unit : MonoBehaviour
     public Team GetTeam()
     {
         return team;
+    }
+
+    public ElementType GetElementType()
+    {
+        return elementType;
     }
 
     public void SetCombatTilemap(Tilemap tilemap)

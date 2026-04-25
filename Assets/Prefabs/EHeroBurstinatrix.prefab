@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8379719997536580541}
   - component: {fileID: 2679721571291341281}
   m_Layer: 0
-  m_Name: PlayerUnit
+  m_Name: EHeroBurstinatrix
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
