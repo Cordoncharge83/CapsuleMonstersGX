@@ -49,21 +49,18 @@ public class GridManager : MonoBehaviour
 
         Debug.Log($"Clicked cell: {cellPosition}");
 
-        if (!isPlayerSelected)
+        Unit clickedUnit = GetPlayerUnitAtCell(cellPosition);
+
+        if (clickedUnit != null)
         {
-            Unit clickedUnit = GetPlayerUnitAtCell(cellPosition);
+            selectedUnit = clickedUnit;
+            isPlayerSelected = true;
 
-            if (clickedUnit != null)
-            {
-                selectedUnit = clickedUnit;
-                isPlayerSelected = true;
+            highlightTilemap.ClearAllTiles();
+            ShowMovementRange();
+            ShowAttackRange();
 
-                ShowMovementRange();
-                ShowAttackRange();
-
-                Debug.Log("Player selected.");
-            }
-
+            Debug.Log("Player selected.");
             return;
         }
 
