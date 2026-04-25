@@ -979,8 +979,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18bfebf52300e1e47b36ec467fbbebc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  enemyUnit: {fileID: 1705193625}
-  playerUnit: {fileID: 380841275}
+  enemyUnits:
+  - {fileID: 1705193625}
+  - {fileID: 232330379}
+  playerUnits:
+  - {fileID: 380841275}
+  - {fileID: 1043663022}
   combatTilemap: {fileID: 1477658910}
   turnManager: {fileID: 548537081}
 --- !u!4 &1369665382
