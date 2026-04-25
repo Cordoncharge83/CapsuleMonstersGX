@@ -41,12 +41,6 @@ public static class ElementSystem
         if (attacker == ElementType.Fire && defender == ElementType.Water)
             return 0.5f;
 
-        if (attacker == ElementType.Dark && defender == ElementType.Light)
-            return 0.5f;
-
-        if (attacker == ElementType.Light && defender == ElementType.Dark)
-            return 0.5f;
-
         return 1f;
     }
 }

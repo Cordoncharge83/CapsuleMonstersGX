@@ -111,6 +111,18 @@ public class Unit : MonoBehaviour
         return totalDistance <= attackRange;
     }
 
+    public int CalculateDamageAgainst(Unit targetUnit)
+    {
+        float multiplier = ElementSystem.GetMultiplier(
+            elementType,
+            targetUnit.GetElementType()
+        );
+
+        int finalDamage = Mathf.RoundToInt(attackPower * multiplier);
+
+        return finalDamage;
+    }
+
     public void TakeDamage(int damage)
     {
         currentHp -= damage;

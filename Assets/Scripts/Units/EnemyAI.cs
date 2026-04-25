@@ -27,7 +27,8 @@ public class EnemyAI : MonoBehaviour
 
             if (enemy.IsInAttackRange(targetPlayer))
             {
-                targetPlayer.TakeDamage(enemy.GetAttackPower());
+                int damage = enemy.CalculateDamageAgainst(targetPlayer);
+                targetPlayer.TakeDamage(damage);
             }
             else
             {

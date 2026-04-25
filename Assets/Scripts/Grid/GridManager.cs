@@ -191,7 +191,8 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        targetEnemy.TakeDamage(selectedUnit.GetAttackPower());
+        int damage = selectedUnit.CalculateDamageAgainst(targetEnemy);
+        targetEnemy.TakeDamage(damage);
         turnManager.EndPlayerTurn();
     }
 
