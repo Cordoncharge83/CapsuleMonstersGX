@@ -253,6 +253,7 @@ MonoBehaviour:
   highlightTilemap: {fileID: 1032318099}
   moveHighlightTile: {fileID: 11400000, guid: 8487b7c8fbb6f6f408815ec7af58ce88, type: 2}
   attackHighlightTile: {fileID: 11400000, guid: 8d22f00c52179e84395054fd610fdd87, type: 2}
+  fusionHighlightTile: {fileID: 11400000, guid: 466fa249cc865ec4c8be74a0d924ba02, type: 2}
   playerUnits: []
   enemyUnits: []
   turnManager: {fileID: 548537081}

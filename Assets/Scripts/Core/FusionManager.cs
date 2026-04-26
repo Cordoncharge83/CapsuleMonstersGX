@@ -72,4 +72,22 @@ public class FusionManager : MonoBehaviour
 
         return distance == 1;
     }
+
+    public bool CanFuse(Unit a, Unit b)
+    {
+        if (!AreAdjacent(a, b))
+        {
+            return false;
+        }
+
+        foreach (var recipe in fusionRecipes)
+        {
+            if (IsMatch(recipe, a, b))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -21,6 +21,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Tilemap highlightTilemap;
     [SerializeField] private TileBase moveHighlightTile;
     [SerializeField] private TileBase attackHighlightTile;
+    [SerializeField] private TileBase fusionHighlightTile;
 
     [SerializeField] private List<Unit> playerUnits;
     [SerializeField] private List<Unit> enemyUnits;
@@ -50,6 +51,10 @@ public class GridManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F) && selectedUnit != null)
         {
             isFusionMode = true;
+
+            highlightTilemap.ClearAllTiles();
+            ShowFusionTargets();
+            
             Debug.Log("Fusion mode active. Select a fusion material.");
         }
 
@@ -88,6 +93,9 @@ public class GridManager : MonoBehaviour
                 Unit fusedUnit = fusionManager.TryFusion(selectedUnit, clickedUnit);
 
                 isFusionMode = false;
+                highlightTilemap.ClearAllTiles();
+                ShowMovementRange();
+                ShowAttackRange();
 
                 if (fusedUnit != null)
                 {
@@ -121,6 +129,18 @@ public class GridManager : MonoBehaviour
         {
             TryAttackEnemy(clickedEnemy);
             DeselectPlayer();
+            return;
+        }
+
+        if (isFusionMode)
+        {
+            isFusionMode = false;
+
+            highlightTilemap.ClearAllTiles();
+            ShowMovementRange();
+            ShowAttackRange();
+
+            Debug.Log("Fusion mode cancelled.");
             return;
         }
 
@@ -301,6 +321,25 @@ public class GridManager : MonoBehaviour
         {
             Debug.Log("All units placed. Starting battle.");
             currentPhase = GamePhase.Battle;
+        }
+    }
+
+    private void ShowFusionTargets()
+    {
+        highlightTilemap.ClearAllTiles();
+
+        foreach (Unit unit in playerUnits)
+        {
+            if (unit == null || unit == selectedUnit)
+            {
+                continue;
+            }
+
+            if (fusionManager.CanFuse(selectedUnit, unit))
+            {
+                Vector3Int unitCell = unit.GetCurrentCellPosition();
+                highlightTilemap.SetTile(unitCell, fusionHighlightTile);
+            }
         }
     }
 }
