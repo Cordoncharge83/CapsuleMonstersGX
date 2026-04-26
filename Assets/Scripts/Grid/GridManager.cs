@@ -248,7 +248,7 @@ public class GridManager : MonoBehaviour
         enemyUnits.Add(unit);
     }
 
-    private bool IsCellOccupied(Vector3Int cellPosition)
+    public bool IsCellOccupied(Vector3Int cellPosition)
     {
         foreach (Unit unit in playerUnits)
         {

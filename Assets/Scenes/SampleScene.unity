@@ -257,8 +257,6 @@ MonoBehaviour:
   enemyUnits: []
   turnManager: {fileID: 548537081}
   fusionManager: {fileID: 891492302}
-  testUnitA: {fileID: 0}
-  testUnitB: {fileID: 0}
 --- !u!4 &454986553
 Transform:
   m_ObjectHideFlags: 0
@@ -752,6 +750,7 @@ MonoBehaviour:
   playerUnits: []
   combatTilemap: {fileID: 1477658910}
   turnManager: {fileID: 548537081}
+  gridManager: {fileID: 454986552}
 --- !u!4 &1369665382
 Transform:
   m_ObjectHideFlags: 0

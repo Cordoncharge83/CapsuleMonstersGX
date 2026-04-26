@@ -8,6 +8,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private List<Unit> playerUnits;
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private TurnManager turnManager;
+    [SerializeField] private GridManager gridManager;
 
     public void TakeTurn()
     {
@@ -101,34 +102,13 @@ public class EnemyAI : MonoBehaviour
                 return;
             }
 
-            if (IsCellOccupied(targetCell))
+            if (gridManager.IsCellOccupied(targetCell))
             {
                 return;
             }
 
             enemy.MoveTo(targetCell);
         }
-    }
-
-    private bool IsCellOccupied(Vector3Int cellPosition)
-    {
-        foreach (Unit player in playerUnits)
-        {
-            if (player != null && player.GetCurrentCellPosition() == cellPosition)
-            {
-                return true;
-            }
-        }
-
-        foreach (Unit enemy in enemyUnits)
-        {
-            if (enemy != null && enemy.GetCurrentCellPosition() == cellPosition)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public void AddPlayerUnit(Unit unit)
