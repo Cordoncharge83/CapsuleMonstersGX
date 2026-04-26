@@ -11,6 +11,12 @@ public class FusionManager : MonoBehaviour
 
     public Unit TryFusion(Unit a, Unit b)
     {
+        if (!AreAdjacent(a, b))
+        {
+            Debug.Log("Units must be adjacent to fuse.");
+            return null;
+        }
+
         foreach (var recipe in fusionRecipes)
         {
             if (IsMatch(recipe, a, b))
@@ -53,5 +59,17 @@ public class FusionManager : MonoBehaviour
         Debug.Log("Fusion successful: " + fusedUnit.name);
 
         return fusedUnit;
+    }
+
+    private bool AreAdjacent(Unit a, Unit b)
+    {
+        Vector3Int aCell = a.GetCurrentCellPosition();
+        Vector3Int bCell = b.GetCurrentCellPosition();
+
+        int distance =
+            Mathf.Abs(aCell.x - bCell.x) +
+            Mathf.Abs(aCell.y - bCell.y);
+
+        return distance == 1;
     }
 }

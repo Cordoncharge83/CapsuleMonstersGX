@@ -28,13 +28,12 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TurnManager turnManager;
 
     [SerializeField] private FusionManager fusionManager;
-    [SerializeField] private Unit testUnitA;
-    [SerializeField] private Unit testUnitB;
 
     private Unit selectedUnit;
 
     private Camera mainCamera;
     private bool isPlayerSelected = false;
+    private bool isFusionMode = false;
 
     private void Awake()
     {
@@ -48,9 +47,10 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) && selectedUnit != null)
         {
-            fusionManager.TryFusion(testUnitA, testUnitB);
+            isFusionMode = true;
+            Debug.Log("Fusion mode active. Select a fusion material.");
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -83,8 +83,25 @@ public class GridManager : MonoBehaviour
 
         if (clickedUnit != null)
         {
+            if (isFusionMode && selectedUnit != null && selectedUnit != clickedUnit)
+            {
+                Unit fusedUnit = fusionManager.TryFusion(selectedUnit, clickedUnit);
+
+                isFusionMode = false;
+
+                if (fusedUnit != null)
+                {
+                    DeselectPlayer();
+                    turnManager.EndPlayerTurn();
+                    return;
+                }
+
+                Debug.Log("Fusion failed.");
+                return;
+            }
+
             selectedUnit = clickedUnit;
-            isPlayerSelected = true;
+            isFusionMode = false;
 
             highlightTilemap.ClearAllTiles();
             ShowMovementRange();
@@ -212,6 +229,7 @@ public class GridManager : MonoBehaviour
     private void DeselectPlayer()
     {
         selectedUnit = null;
+        isFusionMode = false;
         highlightTilemap.ClearAllTiles();
     }
 
