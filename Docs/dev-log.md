@@ -355,3 +355,119 @@ This prepares the project for:
 - Level design
 - Enemy variety and encounter design
 - Future systems like fusion and abilities
+
+## Session 6 — Fusion System (Core Mechanic)
+
+### Objective
+Introduce fusion as a core gameplay mechanic:
+- Combine two units into a stronger unit
+- Integrate fusion into the tactical flow
+- Ensure compatibility with existing systems (Grid, AI, turns)
+
+---
+
+## Systems Implemented
+
+### 1. Fusion Recipe System
+- Created `FusionRecipe` structure:
+  - Defines:
+    - Unit A (ID)
+    - Unit B (ID)
+    - Resulting unit prefab
+- Enables data-driven fusion combinations
+- Independent from unit names or scene objects
+
+---
+
+### 2. Unit Identity System
+- Added `unitId` to `Unit`
+- Provides a stable identifier for gameplay logic
+- Avoids reliance on prefab names (`Clone` issues)
+
+---
+
+### 3. Fusion Manager
+- Implemented `FusionManager`
+- Handles:
+  - Fusion validation
+  - Recipe matching
+  - Unit replacement (destroy + instantiate)
+- Ensures correct:
+  - Positioning (grid cell preserved)
+  - Tilemap assignment at runtime
+
+---
+
+### 4. Fusion Integration
+- Fusion replaces both units with the fused unit
+- Integrated with:
+  - `GridManager` (add/remove units)
+  - `EnemyAI` (target tracking updates)
+- Prevents ghost units or invalid references
+
+---
+
+### 5. Fusion Mode (Player Interaction)
+- Added fusion mode via input (`F` key)
+- Flow:
+  - Select unit A
+  - Press F → enter fusion mode
+  - Select unit B → attempt fusion
+- Prevents accidental fusion during normal selection
+
+---
+
+### 6. Fusion Constraints
+- Fusion requires units to be **adjacent** (Manhattan distance = 1)
+- Ensures tactical positioning is required
+
+---
+
+### 7. Fusion Target Highlighting
+- Added visual feedback for valid fusion targets
+- When in fusion mode:
+  - Movement/attack highlights are cleared
+  - Only valid fusion targets are highlighted
+- Improves clarity and usability
+
+---
+
+### 8. Fusion Mode Control
+- Clicking invalid tile cancels fusion mode
+- Prevents unintended movement during fusion
+- Restores normal highlights after cancel
+
+---
+
+## Current State
+
+Fusion is now a fully functional gameplay mechanic:
+
+Select unit
+→ Enter fusion mode
+→ Select adjacent valid unit
+→ Fusion occurs
+→ Turn ends
+
+This integrates seamlessly into the tactical loop.
+
+---
+
+## Known Limitations
+
+- Fusion triggered via keyboard (no UI yet)
+- No fusion animations or visual effects
+- No feedback when no fusion is available (only logs)
+- No cost system (fusion is free aside from turn usage)
+- No fusion preview (result not shown before action)
+
+---
+
+## Notes
+
+This system establishes the foundation for:
+- GX-style fusion mechanics
+- Fusion capsules (future feature)
+- Advanced abilities tied to fusion units
+
+Fusion is now part of the core combat identity of the game.
