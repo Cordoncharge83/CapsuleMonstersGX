@@ -109,6 +109,8 @@ MonoBehaviour:
   maxHp: 10
   currentHp: 10
   attackPower: 3
-  moveRange: 3
-  attackRange: 2
+  moveRange: 2
+  attackRange: 1
+  unitId: E. Hero Burstinatrix
   team: 0
+  elementType: 0

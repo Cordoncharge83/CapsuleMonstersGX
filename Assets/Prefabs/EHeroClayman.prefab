@@ -111,5 +111,6 @@ MonoBehaviour:
   attackPower: 3
   moveRange: 3
   attackRange: 2
+  unitId: E. Hero Clayman
   team: 0
   elementType: 3

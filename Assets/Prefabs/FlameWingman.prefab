@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8379719997536580541}
   - component: {fileID: 2679721571291341281}
   m_Layer: 0
-  m_Name: EHeroAvian
+  m_Name: FlameWingman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,12 +105,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   combatTilemap: {fileID: 0}
-  currentCellPosition: {x: 0, y: -3, z: 0}
-  maxHp: 10
-  currentHp: 10
-  attackPower: 3
-  moveRange: 2
-  attackRange: 1
-  unitId: E. Hero Avian
+  currentCellPosition: {x: 1, y: -3, z: 0}
+  maxHp: 15
+  currentHp: 15
+  attackPower: 5
+  moveRange: 4
+  attackRange: 2
+  unitId: E. Hero Flame Wingman
   team: 0
   elementType: 2

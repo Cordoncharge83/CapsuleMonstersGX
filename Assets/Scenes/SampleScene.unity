@@ -256,6 +256,9 @@ MonoBehaviour:
   playerUnits: []
   enemyUnits: []
   turnManager: {fileID: 548537081}
+  fusionManager: {fileID: 891492302}
+  testUnitA: {fileID: 0}
+  testUnitB: {fileID: 0}
 --- !u!4 &454986553
 Transform:
   m_ObjectHideFlags: 0
@@ -533,6 +536,57 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &891492301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 891492303}
+  - component: {fileID: 891492302}
+  m_Layer: 0
+  m_Name: FusionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &891492302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891492301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6365c614e1e9744e8c47457e60ab52d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FusionManager
+  fusionRecipes:
+  - unitAId: E. Hero Burstinatrix
+    unitBId: E. Hero Avian
+    resultPrefab: {fileID: 2679721571291341281, guid: 671d17a33707b874e865ad2cab4e99e9, type: 3}
+  combatTilemap: {fileID: 1477658910}
+  gridManager: {fileID: 454986552}
+  enemyAI: {fileID: 1369665381}
+--- !u!4 &891492303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891492301}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.50333, y: -0.18027, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1351,3 +1405,4 @@ SceneRoots:
   - {fileID: 1369665382}
   - {fileID: 1423983053}
   - {fileID: 23163335}
+  - {fileID: 891492303}

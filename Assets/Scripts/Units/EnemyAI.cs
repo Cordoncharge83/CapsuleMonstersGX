@@ -136,6 +136,11 @@ public class EnemyAI : MonoBehaviour
         playerUnits.Add(unit);
     }
 
+    public void RemovePlayerUnit(Unit unit)
+    {
+        playerUnits.Remove(unit);
+    }
+
     public void AddEnemyUnit(Unit unit)
     {
         enemyUnits.Add(unit);

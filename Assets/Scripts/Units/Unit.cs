@@ -18,10 +18,12 @@ public class Unit : MonoBehaviour
     [SerializeField] private int attackPower = 3;
     [SerializeField] private int moveRange = 3;
     [SerializeField] private int attackRange = 1;
+    [SerializeField] private string unitId;
 
     [SerializeField] private Team team;
 
     [SerializeField] private ElementType elementType;
+    public string UnitId => unitId;
 
 
     private void Start()

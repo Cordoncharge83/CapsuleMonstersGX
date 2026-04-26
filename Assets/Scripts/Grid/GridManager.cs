@@ -27,6 +27,10 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private TurnManager turnManager;
 
+    [SerializeField] private FusionManager fusionManager;
+    [SerializeField] private Unit testUnitA;
+    [SerializeField] private Unit testUnitB;
+
     private Unit selectedUnit;
 
     private Camera mainCamera;
@@ -42,6 +46,11 @@ public class GridManager : MonoBehaviour
         if (!turnManager.IsPlayerTurn())
         {
             return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            fusionManager.TryFusion(testUnitA, testUnitB);
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -209,6 +218,11 @@ public class GridManager : MonoBehaviour
     public void AddPlayerUnit(Unit unit)
     {
         playerUnits.Add(unit);
+    }
+
+    public void RemovePlayerUnit(Unit unit)
+    {
+        playerUnits.Remove(unit);
     }
 
     public void AddEnemyUnit(Unit unit)
