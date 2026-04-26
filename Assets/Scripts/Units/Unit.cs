@@ -23,6 +23,10 @@ public class Unit : MonoBehaviour
     [SerializeField] private Team team;
 
     [SerializeField] private ElementType elementType;
+
+    [SerializeField] private Sprite portrait;
+    public Sprite Portrait => portrait;
+
     public string UnitId => unitId;
 
     public int CurrentHp => currentHp;

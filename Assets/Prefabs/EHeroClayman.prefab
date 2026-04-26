@@ -114,3 +114,4 @@ MonoBehaviour:
   unitId: E. Hero Clayman
   team: 0
   elementType: 3
+  portrait: {fileID: -8318143162826461279, guid: b850d0cf7929e9940b3509c84b010257, type: 3}

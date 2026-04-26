@@ -114,3 +114,4 @@ MonoBehaviour:
   unitId: E. Hero Avian
   team: 0
   elementType: 2
+  portrait: {fileID: 7872148111444056163, guid: 9aa657c8d8989c5439b9c25dcfb2067e, type: 3}
