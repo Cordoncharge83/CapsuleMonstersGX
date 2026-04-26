@@ -11,6 +11,7 @@ public class UnitInfoUI : MonoBehaviour
     [SerializeField] private TMP_Text statsText;
     [SerializeField] private TMP_Text elementText;
     [SerializeField] private Image portraitImage;
+    [SerializeField] private Image portraitFrameImage;
 
     public void Show(Unit unit)
     {
@@ -23,10 +24,29 @@ public class UnitInfoUI : MonoBehaviour
 
         portraitImage.sprite = unit.Portrait;
         portraitImage.enabled = unit.Portrait != null;
+
+        Color elementColor = GetElementColor(unit.GetElementType());
+
+        panel.GetComponent<Image>().color = new Color(elementColor.r * 0.5f, elementColor.g * 0.5f, elementColor.b * 0.5f, 0.85f);
+        portraitFrameImage.color = elementColor;
     }
 
     public void Hide()
     {
         panel.SetActive(false);
+    }
+
+    private Color GetElementColor(ElementType element)
+    {
+        switch (element)
+        {
+            case ElementType.Fire: return new Color(0.5f, 0.1f, 0.1f, 0.8f);
+            case ElementType.Water: return new Color(0.1f, 0.1f, 0.5f, 0.8f);
+            case ElementType.Wind: return new Color(0.1f, 0.5f, 0.3f, 0.8f);
+            case ElementType.Earth: return new Color(0.4f, 0.3f, 0.1f, 0.8f);
+            case ElementType.Light: return new Color(0.6f, 0.6f, 0.3f, 0.8f);
+            case ElementType.Dark: return new Color(0.3f, 0.1f, 0.4f, 0.8f);
+            default: return Color.gray;
+        }
     }
 }
