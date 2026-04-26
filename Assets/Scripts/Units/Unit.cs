@@ -25,6 +25,10 @@ public class Unit : MonoBehaviour
     [SerializeField] private ElementType elementType;
     public string UnitId => unitId;
 
+    public int CurrentHp => currentHp;
+    public int MaxHp => maxHp;
+
+
 
     private void Start()
     {

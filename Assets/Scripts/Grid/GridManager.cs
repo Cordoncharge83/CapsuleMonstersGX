@@ -10,6 +10,7 @@ public class GridManager : MonoBehaviour
         Placement,
         Battle
     }
+    [SerializeField] private UnitInfoUI unitInfoUI;
 
     [SerializeField] private GamePhase currentPhase = GamePhase.Placement;
 
@@ -109,6 +110,7 @@ public class GridManager : MonoBehaviour
             }
 
             selectedUnit = clickedUnit;
+            unitInfoUI.Show(selectedUnit);
             isFusionMode = false;
 
             highlightTilemap.ClearAllTiles();
@@ -251,6 +253,7 @@ public class GridManager : MonoBehaviour
         selectedUnit = null;
         isFusionMode = false;
         highlightTilemap.ClearAllTiles();
+        unitInfoUI.Hide();
     }
 
     public void AddPlayerUnit(Unit unit)
