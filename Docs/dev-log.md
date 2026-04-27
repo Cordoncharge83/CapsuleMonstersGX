@@ -471,3 +471,104 @@ This system establishes the foundation for:
 - Advanced abilities tied to fusion units
 
 Fusion is now part of the core combat identity of the game.
+
+
+## Session 7 — UI Improvements & Enemy Turn Pacing
+
+### Overview
+This phase focused on improving **player feedback, UI clarity, and game pacing**. The goal was to move from a purely functional prototype to a more readable and responsive tactical experience.
+
+---
+
+### Action System Improvements
+
+#### Action Panel (Move / Attack / Fuse / Cancel)
+- Introduced a contextual **Action Panel** that appears near the selected unit
+- Replaced keyboard inputs (e.g. `F`) with UI-based actions
+- Actions are now explicitly chosen before execution
+
+#### Dynamic Action Availability
+- **Attack** button only appears if an enemy is in range
+- **Fuse** button only appears if a valid fusion target exists
+- Prevents invalid or confusing actions
+
+#### Cancel System (Right Click)
+- Added universal cancel input:
+  - If in action mode → returns to action selection
+  - If in selection → deselects unit
+  - If enemy info is open → hides it
+- Introduces layered interaction (selection → action → resolution)
+
+#### Action Mode Cleanup
+- Refactored input logic into clear states:
+  - Selection
+  - Action Mode (Move / Attack / Fuse)
+  - Resolution
+- Eliminated ambiguous click behavior
+
+---
+
+### UI Improvements
+
+#### Unit Info Panels
+- Added **separate panels for player and enemy units**
+- Player info appears on the left
+- Enemy info appears on the right
+- Enemy info can be accessed even without selecting a player unit
+
+#### Portrait System
+- Added portrait images to units
+- Introduced element-colored frames and panel tinting
+- Improved visual identity of units
+
+#### Action Panel Behavior
+- Panel appears near selected unit (dynamic positioning)
+- Automatically hides when an action is chosen
+- Uses layout system (Vertical Layout Group + Content Size Fitter)
+  → no empty gaps when buttons are hidden
+- Clamped to screen bounds to prevent going off-screen
+
+#### Turn Indicator
+- Added turn indicator UI
+- Displays:
+  - Placement Phase
+  - Player Turn
+  - Enemy Turn
+- Appears briefly then disappears (non-intrusive)
+
+---
+
+### Enemy Turn Pacing
+
+#### Coroutine-Based Execution
+- Replaced instant enemy execution with coroutine system
+- Enemy turn now unfolds over time:
+  - Initial delay before actions
+  - Delay between each enemy action
+
+#### Result
+- Enemy actions are now readable and understandable
+- Turn indicator is visible and meaningful
+- Overall pacing feels more natural and less abrupt
+
+---
+
+### Current State
+
+The game now features:
+
+- Structured action system with explicit intent
+- Responsive and contextual UI
+- Readable enemy behavior through pacing
+- Improved overall game feel
+
+---
+
+### Next Steps
+
+- Add visual feedback:
+  - Hit effects (damage feedback)
+  - Movement smoothing (instead of teleport)
+  - Fusion effects
+- Improve enemy AI (decision-making)
+- Introduce Action Points (AP) system (optional)
