@@ -80,7 +80,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 50
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: 4964e871a48dc3b4d96e5a73f83a7272, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -115,3 +115,7 @@ MonoBehaviour:
   team: 0
   elementType: 2
   portrait: {fileID: -7494076391745615579, guid: 38f936f8c293a2940a3dcbb5edf07f86, type: 3}
+  hitFlashDuration: 0.25
+  hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
+  damageNumberPrefab: {fileID: 3379813448696997202, guid: 4dab90c4b6683ca49868946a43b73124, type: 3}
+  damageNumberOffset: {x: 0, y: 0.8, z: 0}

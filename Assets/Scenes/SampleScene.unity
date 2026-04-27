@@ -3459,6 +3459,8 @@ MonoBehaviour:
   combatTilemap: {fileID: 1477658910}
   turnManager: {fileID: 548537081}
   gridManager: {fileID: 454986552}
+  startTurnDelay: 0.7
+  delayBetweenEnemyActions: 0.4
 --- !u!4 &1369665382
 Transform:
   m_ObjectHideFlags: 0

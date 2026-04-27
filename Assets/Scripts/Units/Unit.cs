@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -27,12 +28,29 @@ public class Unit : MonoBehaviour
     [SerializeField] private Sprite portrait;
     public Sprite Portrait => portrait;
 
+    [Header("Feedback")]
+    [SerializeField] private float hitFlashDuration = 0.25f;
+    [SerializeField] private Color hitFlashColor = Color.red;
+    [SerializeField] private DamageNumber damageNumberPrefab;
+    [SerializeField] private Vector3 damageNumberOffset = new Vector3(0f, 0.8f, 0f);
+
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+
     public string UnitId => unitId;
 
     public int CurrentHp => currentHp;
     public int MaxHp => maxHp;
 
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
+    }
 
     private void Start()
     {
@@ -139,15 +157,63 @@ public class Unit : MonoBehaviour
 
         Debug.Log($"{gameObject.name} took {damage} damage. HP: {currentHp}/{maxHp}");
 
+        ShowDamageNumber(damage);
+        StartCoroutine(HitFlash());
+
         if (currentHp <= 0)
         {
-            Die();
+            StartCoroutine(DieAfterDelay());
         }
+    }
+
+    private IEnumerator HitFlash()
+    {
+        if (spriteRenderer == null)
+        {
+            yield break;
+        }
+
+        spriteRenderer.color = hitFlashColor;
+
+        yield return new WaitForSeconds(hitFlashDuration);
+
+        spriteRenderer.color = originalColor;
+    }
+
+    private void ShowDamageNumber(int damage)
+    {
+        if (damageNumberPrefab == null)
+        {
+            Debug.Log("DamageNumberPrefab is NULL");
+            return;
+        }
+
+        Vector3 spawnPosition = transform.position + damageNumberOffset;
+        spawnPosition.z = 0f;
+
+        Debug.Log($"Spawning damage number at: {spawnPosition}");
+
+        DamageNumber damageNumber = Instantiate(
+            damageNumberPrefab,
+            spawnPosition,
+            Quaternion.identity
+        );
+
+        Debug.Log($"Actual instantiated position: {damageNumber.transform.position}");
+
+        damageNumber.Setup(damage);
     }
 
     private void Die()
     {
         Debug.Log($"{gameObject.name} was defeated.");
         Destroy(gameObject);
+    }
+
+    private IEnumerator DieAfterDelay()
+    {
+        yield return new WaitForSeconds(hitFlashDuration);
+
+        Die();
     }
 }
