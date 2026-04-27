@@ -19,6 +19,7 @@ public class GridManager : MonoBehaviour
     }
 
     [SerializeField] private UnitInfoUI unitInfoUI;
+    [SerializeField] private UnitInfoUI enemyUnitInfoUI;
     [SerializeField] private ActionUI actionUI;
     [SerializeField] private TurnIndicatorUI turnIndicatorUI;
 
@@ -98,8 +99,21 @@ public class GridManager : MonoBehaviour
             if (clickedPlayer != null)
             {
                 SelectUnit(clickedPlayer);
+                return;
             }
 
+            if (clickedEnemy != null)
+            {
+                enemyUnitInfoUI.Show(clickedEnemy);
+                return;
+            }
+
+            return;
+        }
+
+        if (clickedEnemy != null && currentActionMode == ActionMode.None)
+        {
+            enemyUnitInfoUI.Show(clickedEnemy);
             return;
         }
 
@@ -264,6 +278,7 @@ public class GridManager : MonoBehaviour
         currentActionMode = ActionMode.None;
         highlightTilemap.ClearAllTiles();
         unitInfoUI.Hide();
+        enemyUnitInfoUI.Hide();
         actionUI.Hide();
     }
 
@@ -426,8 +441,10 @@ public class GridManager : MonoBehaviour
     {
         if (selectedUnit == null)
         {
+            enemyUnitInfoUI.Hide();
             return;
         }
+
 
         if (currentActionMode != ActionMode.None)
         {

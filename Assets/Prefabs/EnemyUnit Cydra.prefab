@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5305162351650571655}
   - component: {fileID: 2366910431395941468}
   m_Layer: 0
-  m_Name: EnemyUnit
+  m_Name: EnemyUnit Cydra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,5 +111,7 @@ MonoBehaviour:
   attackPower: 2
   moveRange: 2
   attackRange: 1
+  unitId: Cyber Dragon
   team: 1
-  elementType: 0
+  elementType: 4
+  portrait: {fileID: 879706479860948986, guid: d8bc9a3c3b9bbf747bac4f7f3f6ec47c, type: 3}

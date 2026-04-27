@@ -62,7 +62,7 @@ public class ActionUI : MonoBehaviour
     public void SetPosition(Vector3 worldPosition)
     {
         Vector3 screenPos = mainCamera.WorldToScreenPoint(worldPosition);
-        screenPos.y += 90f;
+        screenPos.y += 70f;
 
         panelRect.position = screenPos;
 

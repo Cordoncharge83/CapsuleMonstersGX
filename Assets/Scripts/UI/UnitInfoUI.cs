@@ -44,7 +44,7 @@ public class UnitInfoUI : MonoBehaviour
             case ElementType.Water: return new Color(0.1f, 0.1f, 0.5f, 0.8f);
             case ElementType.Wind: return new Color(0.1f, 0.5f, 0.3f, 0.8f);
             case ElementType.Earth: return new Color(0.4f, 0.3f, 0.1f, 0.8f);
-            case ElementType.Light: return new Color(0.6f, 0.6f, 0.3f, 0.8f);
+            case ElementType.Light: return new Color(1f, 0.95f, 0.75f, 0.8f);
             case ElementType.Dark: return new Color(0.3f, 0.1f, 0.4f, 0.8f);
             default: return Color.gray;
         }
