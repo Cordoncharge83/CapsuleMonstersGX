@@ -20,6 +20,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private UnitInfoUI unitInfoUI;
     [SerializeField] private ActionUI actionUI;
+    [SerializeField] private TurnIndicatorUI turnIndicatorUI;
 
     [SerializeField] private GamePhase currentPhase = GamePhase.Placement;
 
@@ -49,6 +50,7 @@ public class GridManager : MonoBehaviour
     private void Awake()
     {
         mainCamera = Camera.main;
+        turnIndicatorUI.ShowPlacementPhase();
     }
 
     private void Update()
@@ -324,6 +326,7 @@ public class GridManager : MonoBehaviour
         {
             Debug.Log("All units placed. Starting battle.");
             currentPhase = GamePhase.Battle;
+            turnIndicatorUI.ShowPlayerTurn();
             return;
         }
 
@@ -333,6 +336,7 @@ public class GridManager : MonoBehaviour
         {
             Debug.Log("All units placed. Starting battle.");
             currentPhase = GamePhase.Battle;
+            turnIndicatorUI.ShowPlayerTurn();
         }
     }
 

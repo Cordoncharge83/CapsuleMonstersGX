@@ -10,6 +10,7 @@ public class TurnManager : MonoBehaviour
     }
 
     [SerializeField] private EnemyAI enemyAI;
+    [SerializeField] private TurnIndicatorUI turnIndicatorUI;
 
     public TurnState currentTurn = TurnState.PlayerTurn;
 
@@ -22,6 +23,7 @@ public class TurnManager : MonoBehaviour
     {
         currentTurn = TurnState.EnemyTurn;
         Debug.Log("Enemy Turn");
+        turnIndicatorUI.ShowEnemyTurn();
 
         enemyAI.TakeTurn();
     }
@@ -30,5 +32,6 @@ public class TurnManager : MonoBehaviour
     {
         currentTurn = TurnState.PlayerTurn;
         Debug.Log("Player Turn");
+        turnIndicatorUI.ShowPlayerTurn();
     }
 }
