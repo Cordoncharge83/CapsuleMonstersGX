@@ -10,7 +10,16 @@ public class GridManager : MonoBehaviour
         Placement,
         Battle
     }
+    private enum ActionMode
+    {
+        None,
+        Move,
+        Attack,
+        Fuse
+    }
+
     [SerializeField] private UnitInfoUI unitInfoUI;
+    [SerializeField] private ActionUI actionUI;
 
     [SerializeField] private GamePhase currentPhase = GamePhase.Placement;
 
@@ -35,7 +44,7 @@ public class GridManager : MonoBehaviour
 
     private Camera mainCamera;
     private bool isPlayerSelected = false;
-    private bool isFusionMode = false;
+    private ActionMode currentActionMode = ActionMode.None;
 
     private void Awake()
     {
@@ -49,14 +58,10 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && selectedUnit != null)
+        if (Input.GetMouseButtonDown(1))
         {
-            isFusionMode = true;
-
-            highlightTilemap.ClearAllTiles();
-            ShowFusionTargets();
-            
-            Debug.Log("Fusion mode active. Select a fusion material.");
+            HandleCancelInput();
+            return;
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -67,8 +72,6 @@ public class GridManager : MonoBehaviour
 
     private void DetectClickedCell()
     {
-
-
         Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPosition = combatTilemap.WorldToCell(mouseWorldPosition);
 
@@ -85,77 +88,65 @@ public class GridManager : MonoBehaviour
 
         Debug.Log($"Clicked cell: {cellPosition}");
 
-        Unit clickedUnit = GetPlayerUnitAtCell(cellPosition);
+        Unit clickedPlayer = GetPlayerUnitAtCell(cellPosition);
+        Unit clickedEnemy = GetEnemyUnitAtCell(cellPosition);
 
-        if (clickedUnit != null)
+        if (selectedUnit == null)
         {
-            if (isFusionMode && selectedUnit != null && selectedUnit != clickedUnit)
+            if (clickedPlayer != null)
             {
-                Unit fusedUnit = fusionManager.TryFusion(selectedUnit, clickedUnit);
+                SelectUnit(clickedPlayer);
+            }
 
-                isFusionMode = false;
-                highlightTilemap.ClearAllTiles();
-                ShowMovementRange();
-                ShowAttackRange();
+            return;
+        }
+
+        if (currentActionMode == ActionMode.Fuse)
+        {
+            if (clickedPlayer != null && clickedPlayer != selectedUnit)
+            {
+                Unit fusedUnit = fusionManager.TryFusion(selectedUnit, clickedPlayer);
 
                 if (fusedUnit != null)
                 {
                     DeselectPlayer();
                     turnManager.EndPlayerTurn();
-                    return;
                 }
+            }
 
-                Debug.Log("Fusion failed.");
+            return;
+        }
+
+        if (currentActionMode == ActionMode.Attack)
+        {
+            if (clickedEnemy != null)
+            {
+                TryAttackEnemy(clickedEnemy);
+                DeselectPlayer();
+            }
+
+            return;
+        }
+
+        if (currentActionMode == ActionMode.Move)
+        {
+            if (!selectedUnit.CanMoveTo(cellPosition) || IsCellOccupied(cellPosition))
+            {
+                Debug.Log("Invalid move.");
                 return;
             }
 
-            selectedUnit = clickedUnit;
-            unitInfoUI.Show(selectedUnit);
-            isFusionMode = false;
-
-            highlightTilemap.ClearAllTiles();
-            ShowMovementRange();
-            ShowAttackRange();
-
-            Debug.Log("Player selected.");
-            return;
-        }
-        if (selectedUnit == null)
-        {
-            return;
-        }
-
-        Unit clickedEnemy = GetEnemyUnitAtCell(cellPosition);
-
-        if (clickedEnemy != null)
-        {
-            TryAttackEnemy(clickedEnemy);
+            selectedUnit.MoveTo(cellPosition);
             DeselectPlayer();
+            turnManager.EndPlayerTurn();
             return;
         }
 
-        if (isFusionMode)
+        if (clickedPlayer != null)
         {
-            isFusionMode = false;
-
-            highlightTilemap.ClearAllTiles();
-            ShowMovementRange();
-            ShowAttackRange();
-
-            Debug.Log("Fusion mode cancelled.");
+            SelectUnit(clickedPlayer);
             return;
         }
-
-        if (!selectedUnit.CanMoveTo(cellPosition) || IsCellOccupied(cellPosition))
-        {
-            Debug.Log("Invalid move.");
-            DeselectPlayer();
-            return;
-        }
-
-        selectedUnit.MoveTo(cellPosition);
-        DeselectPlayer();
-        turnManager.EndPlayerTurn();
     }
 
     private Unit GetPlayerUnitAtCell(Vector3Int cellPosition)
@@ -248,12 +239,30 @@ public class GridManager : MonoBehaviour
         turnManager.EndPlayerTurn();
     }
 
+    private void SelectUnit(Unit unit)
+    {
+        selectedUnit = unit;
+        currentActionMode = ActionMode.None;
+
+        highlightTilemap.ClearAllTiles();
+
+        unitInfoUI.Show(selectedUnit);
+        actionUI.Show(
+            HasAttackTarget(selectedUnit),
+            HasFusionTarget(selectedUnit),
+            selectedUnit.transform.position
+        );
+
+        Debug.Log("Player selected.");
+    }
+
     private void DeselectPlayer()
     {
         selectedUnit = null;
-        isFusionMode = false;
+        currentActionMode = ActionMode.None;
         highlightTilemap.ClearAllTiles();
         unitInfoUI.Hide();
+        actionUI.Hide();
     }
 
     public void AddPlayerUnit(Unit unit)
@@ -344,5 +353,92 @@ public class GridManager : MonoBehaviour
                 highlightTilemap.SetTile(unitCell, fusionHighlightTile);
             }
         }
+    }
+
+    public void EnterMoveMode()
+    {
+        if (selectedUnit == null) return;
+
+        currentActionMode = ActionMode.Move;
+        highlightTilemap.ClearAllTiles();
+        ShowMovementRange();
+    }
+
+    public void EnterAttackMode()
+    {
+        if (selectedUnit == null) return;
+
+        currentActionMode = ActionMode.Attack;
+        highlightTilemap.ClearAllTiles();
+        ShowAttackRange();
+    }
+
+    public void EnterFuseMode()
+    {
+        if (selectedUnit == null) return;
+
+        currentActionMode = ActionMode.Fuse;
+        highlightTilemap.ClearAllTiles();
+        ShowFusionTargets();
+    }
+
+    public void CancelAction()
+    {
+        DeselectPlayer();
+    }
+
+    public bool HasAttackTarget(Unit unit)
+    {
+        foreach (Unit enemy in enemyUnits)
+        {
+            if (enemy != null && unit.IsInAttackRange(enemy))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool HasFusionTarget(Unit unit)
+    {
+        foreach (Unit ally in playerUnits)
+        {
+            if (ally == null || ally == unit)
+            {
+                continue;
+            }
+
+            if (fusionManager.CanFuse(unit, ally))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void HandleCancelInput()
+    {
+        if (selectedUnit == null)
+        {
+            return;
+        }
+
+        if (currentActionMode != ActionMode.None)
+        {
+            currentActionMode = ActionMode.None;
+            highlightTilemap.ClearAllTiles();
+
+            actionUI.Show(
+                HasAttackTarget(selectedUnit),
+                HasFusionTarget(selectedUnit),
+                selectedUnit.transform.position
+            );
+
+            return;
+        }
+
+        DeselectPlayer();
     }
 }
