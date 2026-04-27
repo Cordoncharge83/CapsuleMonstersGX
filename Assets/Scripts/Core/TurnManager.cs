@@ -25,7 +25,7 @@ public class TurnManager : MonoBehaviour
         Debug.Log("Enemy Turn");
         turnIndicatorUI.ShowEnemyTurn();
 
-        enemyAI.TakeTurn();
+        StartCoroutine(enemyAI.TakeTurnCoroutine());
     }
 
     public void EndEnemyTurn()

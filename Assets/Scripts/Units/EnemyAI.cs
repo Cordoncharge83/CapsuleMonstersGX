@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -10,8 +11,13 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private GridManager gridManager;
 
-    public void TakeTurn()
+    [SerializeField] private float startTurnDelay = 0.7f;
+    [SerializeField] private float delayBetweenEnemyActions = 0.4f;
+
+    public IEnumerator TakeTurnCoroutine()
     {
+        yield return new WaitForSeconds(startTurnDelay);
+
         foreach (Unit enemy in enemyUnits)
         {
             if (enemy == null)
@@ -35,6 +41,8 @@ public class EnemyAI : MonoBehaviour
             {
                 MoveTowardPlayer(enemy, targetPlayer);
             }
+
+            yield return new WaitForSeconds(delayBetweenEnemyActions);
         }
 
         turnManager.EndEnemyTurn();
