@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private int attackPower = 3;
     [SerializeField] private int moveRange = 3;
     [SerializeField] private int attackRange = 1;
+    [SerializeField] private int defense = 1;
     [SerializeField] private string unitId;
 
     [SerializeField] private Team team;
@@ -111,6 +112,11 @@ public class Unit : MonoBehaviour
         return elementType;
     }
 
+    public int GetDefense()
+    {
+        return defense;
+    }
+
     public void SetCombatTilemap(Tilemap tilemap)
     {
         combatTilemap = tilemap;
@@ -146,9 +152,10 @@ public class Unit : MonoBehaviour
             targetUnit.GetElementType()
         );
 
-        int finalDamage = Mathf.RoundToInt(attackPower * multiplier);
+        int rawDamage = attackPower - targetUnit.GetDefense();
+        int finalDamage = Mathf.RoundToInt(rawDamage * multiplier);
 
-        return finalDamage;
+        return Mathf.Max(1, finalDamage);
     }
 
     public void TakeDamage(int damage)
