@@ -110,7 +110,8 @@ MonoBehaviour:
   currentHp: 10
   attackPower: 3
   moveRange: 2
-  attackRange: 1
+  attackRange: 2
+  defense: 1
   unitId: E. Hero Avian
   team: 0
   elementType: 2
@@ -119,3 +120,5 @@ MonoBehaviour:
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
   damageNumberPrefab: {fileID: 3379813448696997202, guid: 4dab90c4b6683ca49868946a43b73124, type: 3}
   damageNumberOffset: {x: 0, y: 0.8, z: 0}
+  movePattern: 1
+  attackPattern: 2

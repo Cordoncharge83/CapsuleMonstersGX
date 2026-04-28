@@ -204,50 +204,54 @@ public class GridManager : MonoBehaviour
         highlightTilemap.ClearAllTiles();
 
         Vector3Int currentPosition = selectedUnit.GetCurrentCellPosition();
-        int range = selectedUnit.GetMoveRange();
 
-        for (int x = -range; x <= range; x++)
+        List<Vector3Int> cells = GridPatternUtility.GetCellsInPattern(
+            currentPosition,
+            selectedUnit.GetMoveRange(),
+            selectedUnit.GetMovePattern()
+        );
+
+        foreach (Vector3Int targetCell in cells)
         {
-            for (int y = -range; y <= range; y++)
+            if (!combatTilemap.HasTile(targetCell))
             {
-                int distance = Mathf.Abs(x) + Mathf.Abs(y);
-
-                if (distance <= range)
-                {
-                    Vector3Int targetCell = currentPosition + new Vector3Int(x, y, 0);
-
-                    if (combatTilemap.HasTile(targetCell))
-                    {
-                        highlightTilemap.SetTile(targetCell, moveHighlightTile);
-                    }
-                }
+                continue;
             }
+
+            if (IsCellOccupied(targetCell))
+            {
+                continue;
+            }
+
+            highlightTilemap.SetTile(targetCell, moveHighlightTile);
         }
+
         Debug.Log("Showing movement range");
     }
 
     private void ShowAttackRange()
     {
+        highlightTilemap.ClearAllTiles();
+
         Vector3Int currentPosition = selectedUnit.GetCurrentCellPosition();
-        int range = selectedUnit.GetAttackRange();
 
-        for (int x = -range; x <= range; x++)
+        List<Vector3Int> cells = GridPatternUtility.GetCellsInPattern(
+            currentPosition,
+            selectedUnit.GetAttackRange(),
+            selectedUnit.GetAttackPattern()
+        );
+
+        foreach (Vector3Int targetCell in cells)
         {
-            for (int y = -range; y <= range; y++)
+            if (!combatTilemap.HasTile(targetCell))
             {
-                int distance = Mathf.Abs(x) + Mathf.Abs(y);
-
-                if (distance <= range)
-                {
-                    Vector3Int targetCell = currentPosition + new Vector3Int(x, y, 0);
-
-                    if (combatTilemap.HasTile(targetCell))
-                    {
-                        highlightTilemap.SetTile(targetCell, attackHighlightTile);
-                    }
-                }
+                continue;
             }
+
+            highlightTilemap.SetTile(targetCell, attackHighlightTile);
         }
+
+        Debug.Log("Showing attack range");
     }
 
     private void TryAttackEnemy(Unit targetEnemy)

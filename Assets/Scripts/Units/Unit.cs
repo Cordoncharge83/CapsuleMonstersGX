@@ -36,6 +36,9 @@ public class Unit : MonoBehaviour
     [SerializeField] private DamageNumber damageNumberPrefab;
     [SerializeField] private Vector3 damageNumberOffset = new Vector3(0f, 0.8f, 0f);
 
+    [SerializeField] private GridPatternType movePattern = GridPatternType.Diamond;
+    [SerializeField] private GridPatternType attackPattern = GridPatternType.Diamond;
+
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
 
@@ -77,12 +80,12 @@ public class Unit : MonoBehaviour
 
     public bool CanMoveTo(Vector3Int targetCellPosition)
     {
-        int distanceX = Mathf.Abs(currentCellPosition.x - targetCellPosition.x);
-        int distanceY = Mathf.Abs(currentCellPosition.y - targetCellPosition.y);
-
-        int totalDistance = distanceX + distanceY;
-
-        return totalDistance <= moveRange;
+        return GridPatternUtility.IsCellInPattern(
+            currentCellPosition,
+            targetCellPosition,
+            moveRange,
+            movePattern
+        );
     }
 
     public Vector3Int GetCurrentCellPosition()
@@ -120,32 +123,29 @@ public class Unit : MonoBehaviour
         return defense;
     }
 
+    public GridPatternType GetMovePattern()
+    {
+        return movePattern;
+    }
+
+    public GridPatternType GetAttackPattern()
+    {
+        return attackPattern;
+    }
+
     public void SetCombatTilemap(Tilemap tilemap)
     {
         combatTilemap = tilemap;
     }
 
-    // Potentially Obsolete
-    public bool IsAdjacentTo(Unit otherUnit)
-    {
-        Vector3Int otherCell = otherUnit.GetCurrentCellPosition();
-
-        int distanceX = Mathf.Abs(currentCellPosition.x - otherCell.x);
-        int distanceY = Mathf.Abs(currentCellPosition.y - otherCell.y);
-
-        return distanceX + distanceY == 1;
-    }
-
     public bool IsInAttackRange(Unit otherUnit)
     {
-        Vector3Int otherCell = otherUnit.GetCurrentCellPosition();
-
-        int distanceX = Mathf.Abs(currentCellPosition.x - otherCell.x);
-        int distanceY = Mathf.Abs(currentCellPosition.y - otherCell.y);
-
-        int totalDistance = distanceX + distanceY;
-
-        return totalDistance <= attackRange;
+        return GridPatternUtility.IsCellInPattern(
+            currentCellPosition,
+            otherUnit.GetCurrentCellPosition(),
+            attackRange,
+            attackPattern
+        );
     }
 
     public int CalculateDamageAgainst(Unit targetUnit)
