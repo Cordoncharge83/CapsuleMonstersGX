@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -42,6 +43,8 @@ public class Unit : MonoBehaviour
 
     public int CurrentHp => currentHp;
     public int MaxHp => maxHp;
+
+    public event Action<Unit> OnUnitDefeated;
 
     private void Awake()
     {
@@ -198,15 +201,11 @@ public class Unit : MonoBehaviour
         Vector3 spawnPosition = transform.position + damageNumberOffset;
         spawnPosition.z = 0f;
 
-        Debug.Log($"Spawning damage number at: {spawnPosition}");
-
         DamageNumber damageNumber = Instantiate(
             damageNumberPrefab,
             spawnPosition,
             Quaternion.identity
         );
-
-        Debug.Log($"Actual instantiated position: {damageNumber.transform.position}");
 
         damageNumber.Setup(damage);
     }
@@ -214,6 +213,9 @@ public class Unit : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{gameObject.name} was defeated.");
+
+        OnUnitDefeated?.Invoke(this);
+
         Destroy(gameObject);
     }
 

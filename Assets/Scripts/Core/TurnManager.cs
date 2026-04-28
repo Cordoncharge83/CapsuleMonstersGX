@@ -14,6 +14,8 @@ public class TurnManager : MonoBehaviour
 
     public TurnState currentTurn = TurnState.PlayerTurn;
 
+    private bool battleEnded;
+
     public bool IsPlayerTurn()
     {
         return currentTurn == TurnState.PlayerTurn;
@@ -21,6 +23,10 @@ public class TurnManager : MonoBehaviour
 
     public void EndPlayerTurn()
     {
+        if (battleEnded)
+        {
+            return;
+        }
         currentTurn = TurnState.EnemyTurn;
         Debug.Log("Enemy Turn");
         turnIndicatorUI.ShowEnemyTurn();
@@ -30,8 +36,17 @@ public class TurnManager : MonoBehaviour
 
     public void EndEnemyTurn()
     {
+        if (battleEnded)
+        {
+            return;
+        }
         currentTurn = TurnState.PlayerTurn;
         Debug.Log("Player Turn");
         turnIndicatorUI.ShowPlayerTurn();
+    }
+
+    public void EndBattle()
+    {
+        battleEnded = true;
     }
 }

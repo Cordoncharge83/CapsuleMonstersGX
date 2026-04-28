@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+
 public class GridManager : MonoBehaviour
 {
 
@@ -48,6 +49,8 @@ public class GridManager : MonoBehaviour
     private bool isPlayerSelected = false;
     private ActionMode currentActionMode = ActionMode.None;
 
+    private bool battleEnded;
+
     private void Awake()
     {
         mainCamera = Camera.main;
@@ -81,6 +84,11 @@ public class GridManager : MonoBehaviour
         if (currentPhase == GamePhase.Placement)
         {
             HandlePlacement(cellPosition);
+            return;
+        }
+
+        if (battleEnded)
+        {
             return;
         }
 
@@ -252,7 +260,10 @@ public class GridManager : MonoBehaviour
 
         int damage = selectedUnit.CalculateDamageAgainst(targetEnemy);
         targetEnemy.TakeDamage(damage);
-        turnManager.EndPlayerTurn();
+        if (!battleEnded)
+        {
+            turnManager.EndPlayerTurn();
+        }
     }
 
     private void SelectUnit(Unit unit)
@@ -285,16 +296,19 @@ public class GridManager : MonoBehaviour
     public void AddPlayerUnit(Unit unit)
     {
         playerUnits.Add(unit);
+        unit.OnUnitDefeated += HandleUnitDefeated;
     }
 
     public void RemovePlayerUnit(Unit unit)
     {
+        unit.OnUnitDefeated -= HandleUnitDefeated;
         playerUnits.Remove(unit);
     }
 
     public void AddEnemyUnit(Unit unit)
     {
         enemyUnits.Add(unit);
+        unit.OnUnitDefeated += HandleUnitDefeated;
     }
 
     public bool IsCellOccupied(Vector3Int cellPosition)
@@ -352,6 +366,40 @@ public class GridManager : MonoBehaviour
             Debug.Log("All units placed. Starting battle.");
             currentPhase = GamePhase.Battle;
             turnIndicatorUI.ShowPlayerTurn();
+        }
+    }
+
+    private void HandleUnitDefeated(Unit unit)
+    {
+        unit.OnUnitDefeated -= HandleUnitDefeated;
+
+        if (unit.GetTeam() == Unit.Team.Player)
+        {
+            playerUnits.Remove(unit);
+        }
+        else
+        {
+            enemyUnits.Remove(unit);
+        }
+
+        CheckWinCondition();
+    }
+
+    private void CheckWinCondition()
+    {
+        if (enemyUnits.Count == 0)
+        {
+            Debug.Log("Player Wins!");
+            battleEnded = true;
+            turnManager.EndBattle();
+            return;
+        }
+
+        if (playerUnits.Count == 0)
+        {
+            Debug.Log("Player Loses!");
+            battleEnded = true;
+            turnManager.EndBattle();
         }
     }
 
