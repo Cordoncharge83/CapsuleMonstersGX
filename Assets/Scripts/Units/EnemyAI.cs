@@ -34,8 +34,7 @@ public class EnemyAI : MonoBehaviour
 
             if (enemy.IsInAttackRange(targetPlayer))
             {
-                int damage = enemy.CalculateDamageAgainst(targetPlayer);
-                targetPlayer.TakeDamage(damage);
+                yield return AttackSequence(enemy, targetPlayer);
             }
             else
             {
@@ -127,6 +126,21 @@ public class EnemyAI : MonoBehaviour
                 yield return null;
             }
         }
+    }
+
+    private IEnumerator AttackSequence(Unit attacker, Unit target)
+    {
+        Vector3 targetWorldPosition = target.transform.position;
+
+        // Lunge
+        yield return attacker.AttackLunge(targetWorldPosition);
+
+        // Damage
+        int damage = attacker.CalculateDamageAgainst(target);
+        target.TakeDamage(damage);
+
+        // Small pause for readability
+        yield return new WaitForSeconds(0.1f);
     }
 
     public void AddPlayerUnit(Unit unit)

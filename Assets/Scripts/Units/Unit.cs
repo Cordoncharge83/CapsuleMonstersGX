@@ -36,6 +36,10 @@ public class Unit : MonoBehaviour
     private bool isMoving;
     public bool IsMoving => isMoving;
 
+    [Header("Attack Feedback")]
+    [SerializeField] private float lungeDistance = 0.3f;
+    [SerializeField] private float lungeSpeed = 10f;
+
     [Header("Feedback")]
     [SerializeField] private float hitFlashDuration = 0.25f;
     [SerializeField] private Color hitFlashColor = Color.red;
@@ -238,6 +242,40 @@ public class Unit : MonoBehaviour
         );
 
         damageNumber.Setup(damage);
+    }
+
+    public IEnumerator AttackLunge(Vector3 targetWorldPosition)
+    {
+        Vector3 startPosition = transform.position;
+
+        Vector3 direction = (targetWorldPosition - startPosition).normalized;
+        Vector3 lungeTarget = startPosition + direction * lungeDistance;
+
+        // Move forward
+        while (Vector3.Distance(transform.position, lungeTarget) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                lungeTarget,
+                lungeSpeed * Time.deltaTime
+            );
+
+            yield return null;
+        }
+
+        // Move back
+        while (Vector3.Distance(transform.position, startPosition) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                startPosition,
+                lungeSpeed * Time.deltaTime
+            );
+
+            yield return null;
+        }
+
+        transform.position = startPosition;
     }
 
     private void Die()

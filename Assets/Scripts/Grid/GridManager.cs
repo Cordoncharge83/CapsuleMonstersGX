@@ -255,14 +255,36 @@ public class GridManager : MonoBehaviour
 
     private void TryAttackEnemy(Unit targetEnemy)
     {
-        if (!selectedUnit.IsInAttackRange(targetEnemy))
+        StartCoroutine(AttackSequence(targetEnemy));
+    }
+
+    private IEnumerator AttackSequence(Unit targetEnemy)
+    {
+        Unit attacker = selectedUnit;
+
+        if (!attacker.IsInAttackRange(targetEnemy))
         {
             Debug.Log("Enemy is outside attack range. Cannot attack.");
-            return;
+            yield break;
         }
 
-        int damage = selectedUnit.CalculateDamageAgainst(targetEnemy);
+        highlightTilemap.ClearAllTiles();
+        actionUI.Hide();
+
+        Vector3 targetWorldPosition = targetEnemy.transform.position;
+
+        // Lunge
+        yield return attacker.AttackLunge(targetWorldPosition);
+
+        // Damage
+        int damage = attacker.CalculateDamageAgainst(targetEnemy);
         targetEnemy.TakeDamage(damage);
+
+        // Small pause (optional but improves feel)
+        yield return new WaitForSeconds(0.1f);
+
+        DeselectPlayer();
+
         if (!battleEnded)
         {
             turnManager.EndPlayerTurn();
