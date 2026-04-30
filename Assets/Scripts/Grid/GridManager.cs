@@ -24,6 +24,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private UnitInfoUI enemyUnitInfoUI;
     [SerializeField] private ActionUI actionUI;
     [SerializeField] private TurnIndicatorUI turnIndicatorUI;
+    [SerializeField] private DamagePreviewUI damagePreviewUI;
 
     [SerializeField] private GamePhase currentPhase = GamePhase.Placement;
 
@@ -147,7 +148,6 @@ public class GridManager : MonoBehaviour
             if (clickedEnemy != null)
             {
                 TryAttackEnemy(clickedEnemy);
-                DeselectPlayer();
             }
 
             return;
@@ -278,7 +278,14 @@ public class GridManager : MonoBehaviour
 
         // Damage
         int damage = attacker.CalculateDamageAgainst(targetEnemy);
+
+        int oldHp = targetEnemy.CurrentHp;
         targetEnemy.TakeDamage(damage);
+        int newHp = targetEnemy.CurrentHp;
+
+        yield return damagePreviewUI.ShowRoutine(targetEnemy, oldHp, newHp);
+
+        targetEnemy.ResolveDeathIfNeeded();
 
         // Small pause (optional but improves feel)
         yield return new WaitForSeconds(0.1f);

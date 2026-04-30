@@ -57,6 +57,7 @@ public class Unit : MonoBehaviour
     public int CurrentHp => currentHp;
     public int MaxHp => maxHp;
 
+    public event Action<Unit, int, int> OnDamageTaken;
     public event Action<Unit> OnUnitDefeated;
 
     private void Awake()
@@ -197,16 +198,24 @@ public class Unit : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        int oldHp = currentHp;
+
         currentHp -= damage;
+        currentHp = Mathf.Max(0, currentHp);
 
         Debug.Log($"{gameObject.name} took {damage} damage. HP: {currentHp}/{maxHp}");
 
+        OnDamageTaken?.Invoke(this, oldHp, currentHp);
+
         ShowDamageNumber(damage);
         StartCoroutine(HitFlash());
+    }
 
+    public void ResolveDeathIfNeeded()
+    {
         if (currentHp <= 0)
         {
-            StartCoroutine(DieAfterDelay());
+            Die();
         }
     }
 
@@ -287,10 +296,4 @@ public class Unit : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private IEnumerator DieAfterDelay()
-    {
-        yield return new WaitForSeconds(hitFlashDuration);
-
-        Die();
-    }
 }

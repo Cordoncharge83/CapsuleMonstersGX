@@ -11,6 +11,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private GridManager gridManager;
 
+    [SerializeField] private DamagePreviewUI damagePreviewUI;
+
     [SerializeField] private float startTurnDelay = 0.7f;
     [SerializeField] private float delayBetweenEnemyActions = 0.4f;
 
@@ -137,7 +139,14 @@ public class EnemyAI : MonoBehaviour
 
         // Damage
         int damage = attacker.CalculateDamageAgainst(target);
+
+        int oldHp = target.CurrentHp;
         target.TakeDamage(damage);
+        int newHp = target.CurrentHp;
+
+        yield return damagePreviewUI.ShowRoutine(target, oldHp, newHp);
+
+        target.ResolveDeathIfNeeded();
 
         // Small pause for readability
         yield return new WaitForSeconds(0.1f);
