@@ -572,3 +572,68 @@ The game now features:
   - Fusion effects
 - Improve enemy AI (decision-making)
 - Introduce Action Points (AP) system (optional)
+
+## Session 8 — Combat Feedback & Tactical Depth
+
+### Overview
+This session focused on improving combat feel, completing the battle loop, and making unit behavior more tactical.
+
+---
+
+### Systems Implemented
+
+#### 1. Damage Feedback
+- Added hit flash when units take damage
+- Added floating damage numbers
+- Ensured feedback plays before defeated units disappear
+
+#### 2. Defense Stat
+- Added `DEF` stat to units
+- Updated damage calculation:
+  - Damage now considers ATK, DEF, and elemental multiplier
+  - Minimum damage is always 1
+
+#### 3. Win / Loss Conditions
+- Added `OnUnitDefeated` event to `Unit`
+- `GridManager` now removes defeated units and checks battle outcome
+- Player wins when all enemies are defeated
+- Player loses when all player units are defeated
+- Added `battleEnded` logic to stop input and turn flow
+
+#### 4. Grid Pattern System
+- Added `GridPatternType`
+- Added reusable `GridPatternUtility`
+- Implemented:
+  - Diamond
+  - Cross
+  - Diagonal
+- Movement, attack validation, and highlights now use patterns
+
+#### 5. Smooth Movement
+- Replaced instant movement with coroutine-based sliding
+- Player turn waits for movement to finish
+- Fixed enemy movement desync by waiting for enemy movement animations
+
+#### 6. Attack Animation
+- Added lunge animation for attacks
+- Player and enemy attacks now use animated attack sequences
+
+---
+
+### Current State
+
+The game now has:
+- A complete battle loop
+- Clear damage feedback
+- Win/loss conditions
+- Pattern-based tactical movement and attacks
+- Smooth movement and basic attack animation
+
+---
+
+### Next Steps
+
+- Add ranged/projectile attack feedback
+- Improve UI to show DEF and pattern types
+- Add fusion visual effects
+- Introduce AP system later
