@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -160,9 +161,7 @@ public class GridManager : MonoBehaviour
                 return;
             }
 
-            selectedUnit.MoveTo(cellPosition);
-            DeselectPlayer();
-            turnManager.EndPlayerTurn();
+            StartCoroutine(MoveSelectedUnitSequence(cellPosition));
             return;
         }
 
@@ -513,5 +512,27 @@ public class GridManager : MonoBehaviour
         }
 
         DeselectPlayer();
+    }
+
+    private IEnumerator MoveSelectedUnitSequence(Vector3Int targetCell)
+    {
+        Unit movingUnit = selectedUnit;
+
+        highlightTilemap.ClearAllTiles();
+        actionUI.Hide();
+
+        movingUnit.MoveTo(targetCell);
+
+        while (movingUnit.IsMoving)
+        {
+            yield return null;
+        }
+
+        DeselectPlayer();
+
+        if (!battleEnded)
+        {
+            turnManager.EndPlayerTurn();
+        }
     }
 }

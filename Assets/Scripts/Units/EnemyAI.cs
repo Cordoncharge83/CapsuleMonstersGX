@@ -39,7 +39,7 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
-                MoveTowardPlayer(enemy, targetPlayer);
+                yield return MoveTowardPlayerCoroutine(enemy, targetPlayer);
             }
 
             yield return new WaitForSeconds(delayBetweenEnemyActions);
@@ -77,13 +77,18 @@ public class EnemyAI : MonoBehaviour
         return closestPlayer;
     }
 
-    private void MoveTowardPlayer(Unit enemy, Unit targetPlayer)
+    private IEnumerator MoveTowardPlayerCoroutine(Unit enemy, Unit targetPlayer)
     {
         for (int i = 0; i < enemy.GetMoveRange(); i++)
         {
+            if (enemy == null || targetPlayer == null)
+            {
+                yield break;
+            }
+
             if (enemy.IsInAttackRange(targetPlayer))
             {
-                return;
+                yield break;
             }
 
             Vector3Int enemyCell = enemy.GetCurrentCellPosition();
@@ -107,15 +112,20 @@ public class EnemyAI : MonoBehaviour
 
             if (!combatTilemap.HasTile(targetCell))
             {
-                return;
+                yield break;
             }
 
             if (gridManager.IsCellOccupied(targetCell))
             {
-                return;
+                yield break;
             }
 
             enemy.MoveTo(targetCell);
+
+            while (enemy != null && enemy.IsMoving)
+            {
+                yield return null;
+            }
         }
     }
 

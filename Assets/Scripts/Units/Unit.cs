@@ -30,6 +30,12 @@ public class Unit : MonoBehaviour
     [SerializeField] private Sprite portrait;
     public Sprite Portrait => portrait;
 
+    [Header("Movement Feedback")]
+    [SerializeField] private float moveSpeed = 10f;
+
+    private bool isMoving;
+    public bool IsMoving => isMoving;
+
     [Header("Feedback")]
     [SerializeField] private float hitFlashDuration = 0.25f;
     [SerializeField] private Color hitFlashColor = Color.red;
@@ -73,9 +79,33 @@ public class Unit : MonoBehaviour
         transform.position = worldPosition;
     }
 
+    private IEnumerator MoveToCoroutine(Vector3Int targetCellPosition)
+    {
+        isMoving = true;
+
+        currentCellPosition = targetCellPosition;
+
+        Vector3 startPosition = transform.position;
+        Vector3 targetWorldPosition = combatTilemap.GetCellCenterWorld(targetCellPosition);
+
+        while (Vector3.Distance(transform.position, targetWorldPosition) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                targetWorldPosition,
+                moveSpeed * Time.deltaTime
+            );
+
+            yield return null;
+        }
+
+        transform.position = targetWorldPosition;
+        isMoving = false;
+    }
+
     public void MoveTo(Vector3Int targetCellPosition)
     {
-        SnapToCell(targetCellPosition);
+        StartCoroutine(MoveToCoroutine(targetCellPosition));
     }
 
     public bool CanMoveTo(Vector3Int targetCellPosition)
