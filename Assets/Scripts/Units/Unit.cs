@@ -12,6 +12,13 @@ public class Unit : MonoBehaviour
         Enemy
     }
 
+    public enum ActionState
+    {
+        Ready,
+        Moved,
+        Acted
+    }
+
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Vector3Int currentCellPosition;
 
@@ -22,6 +29,9 @@ public class Unit : MonoBehaviour
     [SerializeField] private int attackRange = 1;
     [SerializeField] private int defense = 1;
     [SerializeField] private string unitId;
+    [Header("AP Costs")]
+    [SerializeField] private int actionAPCost = 1;
+    [SerializeField] private int costToSummon = 1;
 
     [SerializeField] private Team team;
 
@@ -51,6 +61,8 @@ public class Unit : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
+
+    private ActionState actionState = ActionState.Ready;
 
     public string UnitId => unitId;
 
@@ -166,6 +178,41 @@ public class Unit : MonoBehaviour
     public GridPatternType GetAttackPattern()
     {
         return attackPattern;
+    }
+
+    public int GetActionAPCost()
+    {
+        return actionAPCost;
+    }
+
+    public int GetCostToSummon()
+    {
+        return costToSummon;
+    }
+
+    public bool CanAct()
+    {
+        return actionState != ActionState.Acted;
+    }
+
+    public bool HasMovedThisTurn()
+    {
+        return actionState == ActionState.Moved;
+    }
+
+    public void MarkMoved()
+    {
+        actionState = ActionState.Moved;
+    }
+
+    public void MarkActed()
+    {
+        actionState = ActionState.Acted;
+    }
+
+    public void ResetTurnState()
+    {
+        actionState = ActionState.Ready;
     }
 
     public void SetCombatTilemap(Tilemap tilemap)

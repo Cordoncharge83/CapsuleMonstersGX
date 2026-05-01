@@ -48,7 +48,6 @@ public class GridManager : MonoBehaviour
     private Unit selectedUnit;
 
     private Camera mainCamera;
-    private bool isPlayerSelected = false;
     private ActionMode currentActionMode = ActionMode.None;
 
     private bool battleEnded;
@@ -290,9 +289,21 @@ public class GridManager : MonoBehaviour
         // Small pause (optional but improves feel)
         yield return new WaitForSeconds(0.1f);
 
-        DeselectPlayer();
+        if (battleEnded)
+        {
+            DeselectPlayer();
+            yield break;
+        }
 
-        if (!battleEnded)
+        // After ANY attack → unit is done
+        if (!attacker.HasMovedThisTurn())
+        {
+            turnManager.SpendAP(attacker.GetActionAPCost());
+        }
+        attacker.MarkActed();
+
+        DeselectPlayer();
+        if (turnManager.CurrentPlayerAP == 0)
         {
             turnManager.EndPlayerTurn();
         }
@@ -300,17 +311,37 @@ public class GridManager : MonoBehaviour
 
     private void SelectUnit(Unit unit)
     {
+        if (!unit.CanAct())
+        {
+            Debug.Log("This unit has already acted this turn.");
+            return;
+        }
         selectedUnit = unit;
         currentActionMode = ActionMode.None;
 
         highlightTilemap.ClearAllTiles();
 
         unitInfoUI.Show(selectedUnit);
-        actionUI.Show(
-            HasAttackTarget(selectedUnit),
-            HasFusionTarget(selectedUnit),
-            selectedUnit.transform.position
-        );
+        if (selectedUnit.HasMovedThisTurn())
+        {
+            actionUI.Show(
+                false, // canMove
+                HasAttackTarget(selectedUnit),
+                false, // canFuse
+                true,  // canFinish
+                selectedUnit.transform.position
+            );
+        }
+        else
+        {
+            actionUI.Show(
+                true, // canMove
+                HasAttackTarget(selectedUnit),
+                HasFusionTarget(selectedUnit),
+                false, // canFinish
+                selectedUnit.transform.position
+            );
+        }
 
         Debug.Log("Player selected.");
     }
@@ -323,6 +354,21 @@ public class GridManager : MonoBehaviour
         unitInfoUI.Hide();
         enemyUnitInfoUI.Hide();
         actionUI.Hide();
+    }
+
+    public void FinishSelectedUnitAction()
+    {
+        if (selectedUnit == null)
+        {
+            return;
+        }
+
+        selectedUnit.MarkActed();
+        DeselectPlayer();
+        if (turnManager.CurrentPlayerAP == 0)
+        {
+            turnManager.EndPlayerTurn();
+        }
     }
 
     public void AddPlayerUnit(Unit unit)
@@ -458,6 +504,12 @@ public class GridManager : MonoBehaviour
     {
         if (selectedUnit == null) return;
 
+        if (!turnManager.HasEnoughAP(selectedUnit.GetActionAPCost()))
+        {
+            Debug.Log("Not enough AP.");
+            return;
+        }
+
         currentActionMode = ActionMode.Move;
         highlightTilemap.ClearAllTiles();
         ShowMovementRange();
@@ -466,6 +518,13 @@ public class GridManager : MonoBehaviour
     public void EnterAttackMode()
     {
         if (selectedUnit == null) return;
+
+        if (!selectedUnit.HasMovedThisTurn() &&
+    !turnManager.HasEnoughAP(selectedUnit.GetActionAPCost()))
+        {
+            Debug.Log("Not enough AP.");
+            return;
+        }
 
         currentActionMode = ActionMode.Attack;
         highlightTilemap.ClearAllTiles();
@@ -532,8 +591,10 @@ public class GridManager : MonoBehaviour
             highlightTilemap.ClearAllTiles();
 
             actionUI.Show(
+                true,
                 HasAttackTarget(selectedUnit),
                 HasFusionTarget(selectedUnit),
+                false,
                 selectedUnit.transform.position
             );
 
@@ -557,11 +618,51 @@ public class GridManager : MonoBehaviour
             yield return null;
         }
 
+        if (battleEnded)
+        {
+            DeselectPlayer();
+            yield break;
+        }
+
+        movingUnit.MarkMoved();
+        turnManager.SpendAP(movingUnit.GetActionAPCost());
+
+        if (HasAttackTarget(movingUnit))
+        {
+            selectedUnit = movingUnit;
+            currentActionMode = ActionMode.None;
+
+            unitInfoUI.Show(selectedUnit);
+
+            actionUI.Show(
+                false, // canMove
+                true,  // canAttack
+                false, // canFuse
+                true,  // canFinish
+                selectedUnit.transform.position
+            );
+
+            Debug.Log("Unit moved and can still attack.");
+            yield break;
+        }
+
+        movingUnit.MarkActed();        
         DeselectPlayer();
 
-        if (!battleEnded)
+        if (turnManager.CurrentPlayerAP <= 0)
         {
             turnManager.EndPlayerTurn();
+        }
+    }
+
+    public void ResetPlayerUnitsTurnState()
+    {
+        foreach (Unit unit in playerUnits)
+        {
+            if (unit != null)
+            {
+                unit.ResetTurnState();
+            }
         }
     }
 
