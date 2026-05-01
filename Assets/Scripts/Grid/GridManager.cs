@@ -130,12 +130,35 @@ public class GridManager : MonoBehaviour
         {
             if (clickedPlayer != null && clickedPlayer != selectedUnit)
             {
+                Unit resultPrefab = fusionManager.GetFusionResultPrefab(selectedUnit, clickedPlayer);
+
+                if (resultPrefab == null)
+                {
+                    Debug.Log("No valid fusion.");
+                    return;
+                }
+
+                int fusionCost = resultPrefab.GetCostToSummon();
+
+                if (!turnManager.HasEnoughAP(fusionCost))
+                {
+                    Debug.Log("Not enough AP for fusion.");
+                    return;
+                }
+
                 Unit fusedUnit = fusionManager.TryFusion(selectedUnit, clickedPlayer);
 
                 if (fusedUnit != null)
                 {
+                    turnManager.SpendAP(fusionCost);
+                    fusedUnit.MarkActed();
+
                     DeselectPlayer();
-                    turnManager.EndPlayerTurn();
+
+                    if (turnManager.CurrentPlayerAP == 0)
+                    {
+                        turnManager.EndPlayerTurn();
+                    }
                 }
             }
 

@@ -61,6 +61,24 @@ public class FusionManager : MonoBehaviour
         return fusedUnit;
     }
 
+    public Unit GetFusionResultPrefab(Unit a, Unit b)
+    {
+        if (!AreAdjacent(a, b))
+        {
+            return null;
+        }
+
+        foreach (var recipe in fusionRecipes)
+        {
+            if (IsMatch(recipe, a, b))
+            {
+                return recipe.resultPrefab;
+            }
+        }
+
+        return null;
+    }
+
     private bool AreAdjacent(Unit a, Unit b)
     {
         Vector3Int aCell = a.GetCurrentCellPosition();
