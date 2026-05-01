@@ -14,6 +14,7 @@ public class TurnManager : MonoBehaviour
 
     [Header("Action Points")]
     [SerializeField] private int maxPlayerAP = 2;
+    [SerializeField] private APUI apUI;
 
     public TurnState currentTurn = TurnState.PlayerTurn;
 
@@ -26,6 +27,7 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         RestorePlayerAP();
+        apUI.UpdateAP(currentPlayerAP, maxPlayerAP);
         gridManager.ResetPlayerUnitsTurnState();
     }
 
@@ -43,6 +45,7 @@ public class TurnManager : MonoBehaviour
     {
         currentPlayerAP -= cost;
         currentPlayerAP = Mathf.Max(0, currentPlayerAP);
+        apUI.UpdateAP(currentPlayerAP, maxPlayerAP);
 
         Debug.Log($"AP: {currentPlayerAP}/{maxPlayerAP}");
     }
@@ -50,6 +53,7 @@ public class TurnManager : MonoBehaviour
     private void RestorePlayerAP()
     {
         currentPlayerAP = maxPlayerAP;
+        apUI.UpdateAP(currentPlayerAP, maxPlayerAP);
         Debug.Log($"Player AP restored: {currentPlayerAP}/{maxPlayerAP}");
     }
 
