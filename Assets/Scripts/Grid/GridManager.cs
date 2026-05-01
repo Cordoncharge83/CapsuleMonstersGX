@@ -46,6 +46,9 @@ public class GridManager : MonoBehaviour
     [SerializeField] private FusionManager fusionManager;
 
     private Unit selectedUnit;
+    // for cancelling moves 
+    private Vector3Int preMoveCell;
+    private bool canUndoMove;
 
     private Camera mainCamera;
     private ActionMode currentActionMode = ActionMode.None;
@@ -387,6 +390,7 @@ public class GridManager : MonoBehaviour
         }
 
         selectedUnit.MarkActed();
+        canUndoMove = false;
         DeselectPlayer();
         if (turnManager.CurrentPlayerAP == 0)
         {
@@ -607,6 +611,31 @@ public class GridManager : MonoBehaviour
             return;
         }
 
+        if (canUndoMove && selectedUnit.HasMovedThisTurn())
+        {
+            selectedUnit.SnapToCell(preMoveCell);
+            selectedUnit.ResetTurnState();
+
+            turnManager.RefundAP(selectedUnit.GetActionAPCost());
+
+            canUndoMove = false;
+
+            currentActionMode = ActionMode.None;
+            highlightTilemap.ClearAllTiles();
+
+            unitInfoUI.Show(selectedUnit);
+
+            actionUI.Show(
+                true,
+                HasAttackTarget(selectedUnit),
+                HasFusionTarget(selectedUnit),
+                false,
+                selectedUnit.transform.position
+            );
+
+            Debug.Log("Move undone.");
+            return;
+        }
 
         if (currentActionMode != ActionMode.None)
         {
@@ -614,10 +643,10 @@ public class GridManager : MonoBehaviour
             highlightTilemap.ClearAllTiles();
 
             actionUI.Show(
-                true,
+                selectedUnit.HasMovedThisTurn() == false,
                 HasAttackTarget(selectedUnit),
-                HasFusionTarget(selectedUnit),
-                false,
+                selectedUnit.HasMovedThisTurn() == false && HasFusionTarget(selectedUnit),
+                selectedUnit.HasMovedThisTurn(),
                 selectedUnit.transform.position
             );
 
@@ -630,6 +659,8 @@ public class GridManager : MonoBehaviour
     private IEnumerator MoveSelectedUnitSequence(Vector3Int targetCell)
     {
         Unit movingUnit = selectedUnit;
+        preMoveCell = movingUnit.GetCurrentCellPosition();
+        canUndoMove = true;
 
         highlightTilemap.ClearAllTiles();
         actionUI.Hide();
@@ -669,10 +700,11 @@ public class GridManager : MonoBehaviour
             yield break;
         }
 
-        movingUnit.MarkActed();        
+        movingUnit.MarkActed();
+        canUndoMove = false;
         DeselectPlayer();
 
-        if (turnManager.CurrentPlayerAP <= 0)
+        if (turnManager.CurrentPlayerAP == 0)
         {
             turnManager.EndPlayerTurn();
         }

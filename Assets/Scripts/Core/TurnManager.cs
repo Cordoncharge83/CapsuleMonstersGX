@@ -50,6 +50,16 @@ public class TurnManager : MonoBehaviour
         Debug.Log($"AP: {currentPlayerAP}/{maxPlayerAP}");
     }
 
+    public void RefundAP(int amount)
+    {
+        currentPlayerAP += amount;
+        currentPlayerAP = Mathf.Min(currentPlayerAP, maxPlayerAP);
+
+        Debug.Log($"AP refunded: {currentPlayerAP}/{maxPlayerAP}");
+
+        apUI.UpdateAP(currentPlayerAP, maxPlayerAP);
+    }
+
     private void RestorePlayerAP()
     {
         currentPlayerAP = maxPlayerAP;
