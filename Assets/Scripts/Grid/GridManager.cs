@@ -564,4 +564,20 @@ public class GridManager : MonoBehaviour
             turnManager.EndPlayerTurn();
         }
     }
+
+    public void EndPlayerTurnButton()
+    {
+        if (battleEnded)
+        {
+            return;
+        }
+
+        if (!turnManager.IsPlayerTurn())
+        {
+            return;
+        }
+
+        DeselectPlayer();
+        turnManager.EndPlayerTurn();
+    }
 }
