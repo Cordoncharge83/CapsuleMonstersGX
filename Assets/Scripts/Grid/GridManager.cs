@@ -494,17 +494,17 @@ public class GridManager : MonoBehaviour
     {
         if (enemyUnits.Count == 0)
         {
-            Debug.Log("Player Wins!");
             battleEnded = true;
-            turnManager.EndBattle();
+            DeselectPlayer();
+            turnManager.EndBattle(true);
             return;
         }
 
         if (playerUnits.Count == 0)
         {
-            Debug.Log("Player Loses!");
             battleEnded = true;
-            turnManager.EndBattle();
+            DeselectPlayer();
+            turnManager.EndBattle(false);
         }
     }
 

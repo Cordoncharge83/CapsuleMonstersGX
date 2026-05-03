@@ -11,6 +11,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private EnemyAI enemyAI;
     [SerializeField] private TurnIndicatorUI turnIndicatorUI;
     [SerializeField] private GridManager gridManager;
+    [SerializeField] private BattleResultUI battleResultUI;
 
     [Header("Action Points")]
     [SerializeField] private int maxPlayerAP = 2;
@@ -96,8 +97,29 @@ public class TurnManager : MonoBehaviour
         turnIndicatorUI.ShowPlayerTurn();
     }
 
-    public void EndBattle()
+    public bool HasBattleEnded()
     {
+        return battleEnded;
+    }
+
+    public void EndBattle(bool playerWon)
+    {
+        if (battleEnded)
+        {
+            return;
+        }
+
         battleEnded = true;
+
+        if (playerWon)
+        {
+            battleResultUI.ShowVictory();
+        }
+        else
+        {
+            battleResultUI.ShowDefeat();
+        }
+
+        Debug.Log(playerWon ? "Victory!" : "Defeat!");
     }
 }
