@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.EventSystems;
 
 
 public class GridManager : MonoBehaviour
@@ -61,22 +62,33 @@ public class GridManager : MonoBehaviour
         turnIndicatorUI.ShowPlacementPhase();
     }
 
+    
     private void Update()
     {
+        if (battleEnded)
+        {
+            return;
+        }
+
         if (!turnManager.IsPlayerTurn())
         {
             return;
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
-            HandleCancelInput();
             return;
         }
 
         if (Input.GetMouseButtonDown(0))
         {
             DetectClickedCell();
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            HandleCancelInput();
+            return;
         }
     }
 
