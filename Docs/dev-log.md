@@ -637,3 +637,103 @@ The game now has:
 - Improve UI to show DEF and pattern types
 - Add fusion visual effects
 - Introduce AP system later
+
+## Session 9 — AP System, Unit States & Battle Result UI
+
+### Overview
+This session focused on turning the battle system into a more complete tactical loop by adding Action Points, unit action states, post-move decisions, fusion costs, and a proper victory/defeat screen.
+
+---
+
+### Systems Implemented
+
+#### 1. Action Points System
+- Added player AP per turn
+- Player AP resets at the start of each player turn
+- AP is displayed through the AP UI
+- Actions consume AP:
+  - Move costs AP
+  - Direct attack costs AP
+  - Fusion costs AP based on the fused unit summon cost
+- AP can be refunded when undoing a move
+
+#### 2. Unit Action States
+- Added unit turn states:
+  - Ready
+  - Moved
+  - Acted
+- Ready units can move, attack, or fuse
+- Moved units can attack for free or finish
+- Acted units cannot act again
+
+#### 3. Post-Move Action Flow
+- After moving, the unit does not immediately end its action if an enemy is in range
+- Player can:
+  - Attack after moving
+  - Finish the unit’s action
+  - Cancel/undo the move
+- If no enemy is in range after moving, the unit becomes acted automatically
+
+#### 4. Undo Move System
+- Added post-move cancel
+- If the player cancels after moving:
+  - Unit returns to original cell
+  - Unit state resets to Ready
+  - AP is refunded
+- Prevents accidental movement from feeling too punishing
+
+#### 5. Fusion Cost Integration
+- Fusion now checks the summon cost of the resulting fused unit
+- Fusion only succeeds if the player has enough AP
+- After fusion:
+  - Original units are removed
+  - Fused unit is spawned
+  - AP is spent
+  - Fused unit becomes Acted
+
+#### 6. Battle Result UI
+- Added Victory / Defeat screen
+- Battle result appears when all enemies or all player units are defeated
+- End battle panel is placed above all UI
+- Panel blocks interaction with buttons behind it
+- Battle end state prevents further turn progression
+
+#### 7. UI Click Protection
+- Added protection against clicking gameplay tiles/units through UI
+- Grid input now ignores clicks when the pointer is over UI
+- Prevents action panel buttons from also triggering unit selection underneath
+
+---
+
+### Current State
+
+The game now has a much stronger tactical structure:
+
+- Player turns are limited by AP
+- Units have clear action states
+- Movement can be undone before committing
+- Attacks after movement feel intentional
+- Fusion is tied into the AP economy
+- Battles now end with a visible result screen
+
+The prototype is now much closer to a complete playable tactical match.
+
+---
+
+### Known Limitations
+
+- Input can still be spammed during damage preview unless combat input locking is added
+- Victory/Defeat screen has no Retry or Main Menu buttons yet
+- Fusion still has no visual effect
+- AP UI is functional but not visually polished
+- Enemy AI does not yet consider AP, elements, or advanced positioning
+
+---
+
+### Next Steps
+
+- Add input lock during attack/damage preview sequences
+- Add fusion visual feedback
+- Add Retry / Main Menu buttons to battle result screen
+- Improve enemy AI decision-making
+- Later: full UI redesign pass
