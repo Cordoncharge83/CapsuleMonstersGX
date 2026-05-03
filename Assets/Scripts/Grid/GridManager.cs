@@ -55,6 +55,7 @@ public class GridManager : MonoBehaviour
     private ActionMode currentActionMode = ActionMode.None;
 
     private bool battleEnded;
+    private bool inputLocked;
 
     private void Awake()
     {
@@ -65,6 +66,11 @@ public class GridManager : MonoBehaviour
     
     private void Update()
     {
+        if (inputLocked)
+        {
+            return;
+        }
+
         if (battleEnded)
         {
             return;
@@ -307,6 +313,7 @@ public class GridManager : MonoBehaviour
 
         highlightTilemap.ClearAllTiles();
         actionUI.Hide();
+        inputLocked = true;
 
         Vector3 targetWorldPosition = targetEnemy.transform.position;
 
@@ -326,6 +333,8 @@ public class GridManager : MonoBehaviour
 
         // Small pause (optional but improves feel)
         yield return new WaitForSeconds(0.1f);
+
+        inputLocked = false;
 
         if (battleEnded)
         {
