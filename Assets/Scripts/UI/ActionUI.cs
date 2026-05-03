@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class ActionUI : MonoBehaviour
 {
     [SerializeField] private GameObject panel;
 
     [SerializeField] private RectTransform panelRect;
+    [SerializeField] private RectTransform actionPanelRect;
     [SerializeField] private Camera mainCamera;
 
     [SerializeField] private Button moveButton;
@@ -15,6 +17,12 @@ public class ActionUI : MonoBehaviour
     [SerializeField] private Button finishButton;
 
     [SerializeField] private GridManager gridManager;
+
+    [Header("Highlight")]
+    [SerializeField] private RectTransform highlight;
+    [SerializeField] private Button[] actionButtons;
+
+    private Coroutine defaultHighlightCoroutine;
 
     private void Awake()
     {
@@ -49,6 +57,8 @@ public class ActionUI : MonoBehaviour
 
     public void Show(bool canMove, bool canAttack, bool canFuse, bool canFinish, Vector3 worldPosition)
     {
+        SetPosition(worldPosition); // move while still hidden
+
         panel.SetActive(true);
 
         moveButton.gameObject.SetActive(canMove);
@@ -57,14 +67,48 @@ public class ActionUI : MonoBehaviour
         finishButton.gameObject.SetActive(canFinish);
         cancelButton.gameObject.SetActive(true);
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
+        if (defaultHighlightCoroutine != null)
+        {
+            StopCoroutine(defaultHighlightCoroutine);
+        }
 
-        SetPosition(worldPosition);
+        defaultHighlightCoroutine = StartCoroutine(RebuildAndShowNextFrame(worldPosition));
     }
 
     public void Hide()
     {
+        highlight.gameObject.SetActive(false);
         panel.SetActive(false);
+    }
+
+    private void SetDefaultHighlight()
+    {
+        foreach (Button button in actionButtons)
+        {
+            if (button.gameObject.activeSelf)
+            {
+                SetHighlight(button);
+                return;
+            }
+        }
+
+        highlight.gameObject.SetActive(false);
+    }
+
+    private IEnumerator RebuildAndShowNextFrame(Vector3 worldPosition)
+    {
+        yield return null;
+
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(actionPanelRect);
+        Canvas.ForceUpdateCanvases();
+
+        ResizeBackgroundToButtons();
+
+        yield return null;
+
+        SetPosition(worldPosition);
+        SetDefaultHighlight();
     }
 
     public void SetPosition(Vector3 worldPosition)
@@ -75,6 +119,17 @@ public class ActionUI : MonoBehaviour
         panelRect.position = screenPos;
 
         ClampToScreen();
+    }
+
+    private void ResizeBackgroundToButtons()
+    {
+        float paddingX = 12f;
+        float paddingY = 12f;
+
+        float width = LayoutUtility.GetPreferredWidth(actionPanelRect);
+        float height = LayoutUtility.GetPreferredHeight(actionPanelRect);
+
+        panelRect.sizeDelta = new Vector2(width + paddingX, height + paddingY);
     }
 
     private void ClampToScreen()
@@ -110,5 +165,21 @@ public class ActionUI : MonoBehaviour
         }
 
         panelRect.position = position;
+    }
+
+    public void SetHighlight(Button button)
+    {
+        if (button == null || !button.gameObject.activeSelf)
+        {
+            highlight.gameObject.SetActive(false);
+            return;
+        }
+
+        highlight.gameObject.SetActive(true);
+
+        RectTransform target = button.GetComponent<RectTransform>();
+
+        highlight.position = target.position;
+        highlight.sizeDelta = target.sizeDelta;
     }
 }
