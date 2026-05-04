@@ -6,10 +6,6 @@ public class BattleResultUI : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text resultText;
 
-    private void Awake()
-    {
-        Hide();
-    }
 
     public void ShowVictory()
     {
@@ -23,8 +19,4 @@ public class BattleResultUI : MonoBehaviour
         resultText.text = "DEFEAT";
     }
 
-    public void Hide()
-    {
-        panel.SetActive(false);
-    }
 }

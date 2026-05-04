@@ -167,20 +167,7 @@ public class GridManager : MonoBehaviour
                     return;
                 }
 
-                Unit fusedUnit = fusionManager.TryFusion(selectedUnit, clickedPlayer);
-
-                if (fusedUnit != null)
-                {
-                    turnManager.SpendAP(fusionCost);
-                    fusedUnit.MarkActed();
-
-                    DeselectPlayer();
-
-                    if (turnManager.CurrentPlayerAP == 0)
-                    {
-                        turnManager.EndPlayerTurn();
-                    }
-                }
+                StartCoroutine(FusionSequence(selectedUnit, clickedPlayer, fusionCost));
             }
 
             return;
@@ -353,6 +340,35 @@ public class GridManager : MonoBehaviour
         if (turnManager.CurrentPlayerAP == 0)
         {
             turnManager.EndPlayerTurn();
+        }
+    }
+
+    private IEnumerator FusionSequence(Unit unitA, Unit unitB, int fusionCost)
+    {
+        actionUI.Hide();
+        highlightTilemap.ClearAllTiles();
+
+        Unit fusedUnit = null;
+
+        yield return StartCoroutine(fusionManager.TryFusionSequence(unitA, unitB, result =>
+        {
+            fusedUnit = result;
+
+            if (fusedUnit != null)
+            {
+                DeselectPlayer();
+            }
+        }));
+
+        if (fusedUnit != null)
+        {
+            turnManager.SpendAP(fusionCost);
+            fusedUnit.MarkActed();
+
+            if (turnManager.CurrentPlayerAP == 0)
+            {
+                turnManager.EndPlayerTurn();
+            }
         }
     }
 
