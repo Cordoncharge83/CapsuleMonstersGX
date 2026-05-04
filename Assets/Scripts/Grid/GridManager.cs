@@ -314,6 +314,9 @@ public class GridManager : MonoBehaviour
         targetEnemy.TakeDamage(damage);
         int newHp = targetEnemy.CurrentHp;
 
+        // 🔴 HIT PAUSE
+        yield return StartCoroutine(HitPause(0.1f));
+
         yield return damagePreviewUI.ShowRoutine(targetEnemy, oldHp, newHp);
 
         targetEnemy.ResolveDeathIfNeeded();
@@ -341,6 +344,17 @@ public class GridManager : MonoBehaviour
         {
             turnManager.EndPlayerTurn();
         }
+    }
+
+    private IEnumerator HitPause(float duration)
+    {
+        float originalTimeScale = Time.timeScale;
+
+        Time.timeScale = 0f;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        Time.timeScale = originalTimeScale;
     }
 
     private IEnumerator FusionSequence(Unit unitA, Unit unitB, int fusionCost)
