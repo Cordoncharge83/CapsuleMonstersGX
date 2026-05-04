@@ -737,3 +737,124 @@ The prototype is now much closer to a complete playable tactical match.
 - Add Retry / Main Menu buttons to battle result screen
 - Improve enemy AI decision-making
 - Later: full UI redesign pass
+
+## Session 10 — AI Intelligence, Combat Feel & AP UI Upgrade
+
+### Overview
+This session focused on improving **enemy AI decision-making**, enhancing **combat feedback**, and upgrading the **AP UI** to better match the original game.
+
+The goal was to move from a functional system to a more **tactical, readable, and satisfying gameplay experience**.
+
+---
+
+### Systems Implemented
+
+#### 1. Enemy AI — Target Selection Upgrade
+- Replaced closest-target logic with **score-based targeting**
+- Enemies now evaluate:
+  - Distance to target
+  - Remaining HP
+  - Kill potential
+- Prioritizes finishing low-health units and high-value targets
+
+---
+
+#### 2. Enemy AI — Best Target in Range
+- Enemies now select the **best target among those in attack range**
+- Prevents:
+  - Attacking suboptimal targets
+  - Ignoring easy kills
+- After movement, enemies re-evaluate targets before attacking
+
+---
+
+#### 3. Enemy AI — Move → Attack Flow
+- Enemies can now:
+  - Move into position
+  - Then attack in the same turn
+- Added delay between move and attack for readability
+- Removed limitation where enemies could only move OR attack
+
+---
+
+#### 4. Enemy AI — Smart Positioning
+- Implemented **tile scoring system** for movement
+- Movement now considers:
+  - Distance to target
+  - Nearby player units
+  - Threatened tiles
+- Enemies avoid:
+  - Being surrounded
+  - Ending turns in dangerous positions
+
+---
+
+#### 5. Enemy AI — Fallback Movement
+- If no valid attack position is reachable:
+  - Enemy moves toward target
+- Prevents idle or stuck behavior
+
+---
+
+#### 6. Combat Feedback — Hit Pause
+- Added **hit pause (hit stop)** on impact
+- Short freeze (~0.06s) when damage is applied
+- Improves:
+  - Impact
+  - Readability
+  - Game feel
+
+---
+
+#### 7. AP UI — Visual Bar System
+- Replaced simple AP text with a **visual AP bar**
+- Inspired by original *Capsule Monster Coliseum*
+
+New display format:
+
+AP   2 (+3)
+[██████----]
+
+Features:
+- Bar represents **max AP**
+- Fill represents **current AP**
+- Gain display (`+maxAP`) added as placeholder
+- Smooth fill animation implemented
+
+---
+
+### Current State
+
+The game now features:
+
+- Tactical enemy AI with:
+  - Target prioritization
+  - Smart positioning
+  - Move-then-attack behavior
+- Improved combat feel through hit pause
+- Clear and readable AP UI
+
+The gameplay loop is now:
+
+Strategic → Responsive → Readable → Satisfying
+
+---
+
+### Known Limitations
+
+- AI does not yet consider:
+  - Elemental advantage
+  - Advanced positioning (no pathfinding)
+- Movement can still be blocked
+- AP gain system is placeholder
+- AP UI lacks advanced feedback (color/pulse)
+- No sound effects yet
+
+---
+
+### Next Steps
+
+- Further refine AI behavior
+- Add sound effects for actions
+- Improve UI consistency
+- Add unit state indicators (Ready / Moved / Acted)
