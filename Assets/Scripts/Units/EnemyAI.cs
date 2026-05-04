@@ -27,19 +27,21 @@ public class EnemyAI : MonoBehaviour
                 continue;
             }
 
-            Unit targetPlayer = GetBestTarget(enemy);
+            Unit targetInRange = GetBestTargetInRange(enemy);
 
-            if (targetPlayer == null)
+            if (targetInRange != null)
             {
-                continue;
-            }
-
-            if (enemy.IsInAttackRange(targetPlayer))
-            {
-                yield return AttackSequence(enemy, targetPlayer);
+                yield return AttackSequence(enemy, targetInRange);
             }
             else
             {
+                Unit targetPlayer = GetBestTarget(enemy);
+
+                if (targetPlayer == null)
+                {
+                    continue;
+                }
+
                 Vector3Int? bestCell = GetBestAttackPosition(enemy, targetPlayer);
 
                 if (bestCell.HasValue)
@@ -51,10 +53,12 @@ public class EnemyAI : MonoBehaviour
                     yield return MoveTowardPlayerCoroutine(enemy, targetPlayer);
                 }
 
-                if (enemy != null && targetPlayer != null && enemy.IsInAttackRange(targetPlayer))
+                Unit postMoveTarget = GetBestTargetInRange(enemy);
+
+                if (postMoveTarget != null)
                 {
                     yield return new WaitForSeconds(delayBetweenEnemyActions);
-                    yield return AttackSequence(enemy, targetPlayer);
+                    yield return AttackSequence(enemy, postMoveTarget);
                 }
             }
 
@@ -142,7 +146,7 @@ public class EnemyAI : MonoBehaviour
         Vector3Int enemyCell = enemy.GetCurrentCellPosition();
 
         Vector3Int? bestCell = null;
-        int bestDistance = int.MaxValue;
+        int bestScore = int.MinValue;
 
         int moveRange = enemy.GetMoveRange();
 
@@ -152,29 +156,103 @@ public class EnemyAI : MonoBehaviour
             {
                 Vector3Int candidate = enemyCell + new Vector3Int(x, y, 0);
 
-                // skip invalid tiles
-                if (!combatTilemap.HasTile(candidate)) continue;
-                if (gridManager.IsCellOccupied(candidate)) continue;
-
-                // skip cells outside movement range (diamond)
-                int distanceFromStart = Mathf.Abs(x) + Mathf.Abs(y);
-                if (distanceFromStart > moveRange) continue;
-
-                // check if from this tile we can attack target
-                if (IsCellInAttackRange(enemy, target, candidate))
+                if (!combatTilemap.HasTile(candidate))
                 {
-                    int distToTarget = GetDistanceFromCell(candidate, target);
+                    continue;
+                }
 
-                    if (distToTarget < bestDistance)
-                    {
-                        bestDistance = distToTarget;
-                        bestCell = candidate;
-                    }
+                if (gridManager.IsCellOccupied(candidate))
+                {
+                    continue;
+                }
+
+                int distanceFromStart = Mathf.Abs(x) + Mathf.Abs(y);
+
+                if (distanceFromStart > moveRange)
+                {
+                    continue;
+                }
+
+                if (!IsCellInAttackRange(enemy, target, candidate))
+                {
+                    continue;
+                }
+
+                int score = 0;
+
+                // Prefer tiles closer to the target
+                score -= GetDistanceFromCell(candidate, target) * 2;
+
+                // Prefer using less movement if options are otherwise similar
+                score -= distanceFromStart;
+
+                // Avoid standing next to multiple player units
+                score -= CountNearbyPlayerUnits(candidate) * 5;
+
+                // Avoid ending turn inside multiple player attack ranges
+                score -= CountPlayerUnitsThreateningCell(candidate) * 10;
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestCell = candidate;
                 }
             }
         }
 
         return bestCell;
+    }
+
+    private int CountNearbyPlayerUnits(Vector3Int cell)
+    {
+        int count = 0;
+
+        foreach (Unit player in playerUnits)
+        {
+            if (player == null)
+            {
+                continue;
+            }
+
+            Vector3Int playerCell = player.GetCurrentCellPosition();
+
+            int distance =
+                Mathf.Abs(cell.x - playerCell.x) +
+                Mathf.Abs(cell.y - playerCell.y);
+
+            if (distance <= 1)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private int CountPlayerUnitsThreateningCell(Vector3Int cell)
+    {
+        int count = 0;
+
+        foreach (Unit player in playerUnits)
+        {
+            if (player == null)
+            {
+                continue;
+            }
+
+            Vector3Int playerCell = player.GetCurrentCellPosition();
+
+            int distance =
+                Mathf.Abs(cell.x - playerCell.x) +
+                Mathf.Abs(cell.y - playerCell.y);
+
+            if (distance <= player.GetAttackRange())
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private bool IsCellInAttackRange(Unit attacker, Unit target, Vector3Int fromCell)
@@ -194,6 +272,49 @@ public class EnemyAI : MonoBehaviour
 
         return Mathf.Abs(fromCell.x - targetCell.x) +
                Mathf.Abs(fromCell.y - targetCell.y);
+    }
+
+    private Unit GetBestTargetInRange(Unit enemy)
+    {
+        Unit bestTarget = null;
+        int bestScore = int.MinValue;
+
+        foreach (Unit player in playerUnits)
+        {
+            if (player == null)
+            {
+                continue;
+            }
+
+            if (!enemy.IsInAttackRange(player))
+            {
+                continue;
+            }
+
+            int damage = enemy.CalculateDamageAgainst(player);
+
+            int score = 0;
+
+            // Strongly prefer kills
+            if (damage >= player.CurrentHp)
+            {
+                score += 100;
+            }
+
+            // Prefer lower HP targets
+            score += player.MaxHp - player.CurrentHp;
+
+            // Prefer dealing more damage
+            score += damage * 2;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestTarget = player;
+            }
+        }
+
+        return bestTarget;
     }
 
     private IEnumerator MoveTowardPlayerCoroutine(Unit enemy, Unit targetPlayer)

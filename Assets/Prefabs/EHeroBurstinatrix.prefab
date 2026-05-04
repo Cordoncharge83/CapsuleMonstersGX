@@ -109,13 +109,18 @@ MonoBehaviour:
   maxHp: 10
   currentHp: 10
   attackPower: 3
-  moveRange: 2
+  moveRange: 4
   attackRange: 1
   defense: 1
   unitId: E. Hero Burstinatrix
+  actionAPCost: 1
+  costToSummon: 1
   team: 0
   elementType: 0
   portrait: {fileID: -8530038181461810724, guid: 42595876e380dc5489414f61d89c2e5a, type: 3}
+  moveSpeed: 10
+  lungeDistance: 0.3
+  lungeSpeed: 10
   hitFlashDuration: 0.25
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
   damageNumberPrefab: {fileID: 3379813448696997202, guid: 4dab90c4b6683ca49868946a43b73124, type: 3}

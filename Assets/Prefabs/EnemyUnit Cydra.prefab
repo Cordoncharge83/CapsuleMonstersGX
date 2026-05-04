@@ -108,14 +108,22 @@ MonoBehaviour:
   currentCellPosition: {x: 0, y: 3, z: 0}
   maxHp: 8
   currentHp: 8
-  attackPower: 2
+  attackPower: 5
   moveRange: 2
   attackRange: 1
+  defense: 1
   unitId: Cyber Dragon
+  actionAPCost: 1
+  costToSummon: 1
   team: 1
   elementType: 4
   portrait: {fileID: 879706479860948986, guid: d8bc9a3c3b9bbf747bac4f7f3f6ec47c, type: 3}
+  moveSpeed: 10
+  lungeDistance: 0.3
+  lungeSpeed: 10
   hitFlashDuration: 0.25
   hitFlashColor: {r: 0.13962269, g: 0.12407978, b: 0.12407978, a: 1}
   damageNumberPrefab: {fileID: 3379813448696997202, guid: 4dab90c4b6683ca49868946a43b73124, type: 3}
   damageNumberOffset: {x: 0, y: 0.8, z: 0}
+  movePattern: 0
+  attackPattern: 0
