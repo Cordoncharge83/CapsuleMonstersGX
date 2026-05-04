@@ -1,20 +1,47 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 
 public class APUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI apText;
+    [Header("Texts")]
+    [SerializeField] private TextMeshProUGUI currentAPText;
+    [SerializeField] private TextMeshProUGUI gainText;
 
-    private void Awake()
-    {
-        if (apText == null)
-        {
-            apText = GetComponent<TextMeshProUGUI>();
-        }
-    }
+    [Header("Bar")]
+    [SerializeField] private Image fillImage;
 
     public void UpdateAP(int currentAP, int maxAP)
     {
-        apText.text = $"AP: {currentAP}/{maxAP}";
+        // Text
+        currentAPText.text = currentAP.ToString();
+        gainText.text = $"(+{maxAP})";
+
+        // Bar
+        if (maxAP > 0)
+        {
+            StartCoroutine(AnimateFill((float)currentAP / maxAP));
+        }
+        else
+        {
+            fillImage.fillAmount = 0f;
+        }
+    }
+
+    private IEnumerator AnimateFill(float target)
+    {
+        float start = fillImage.fillAmount;
+        float time = 0f;
+        float duration = 0.35f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            fillImage.fillAmount = Mathf.Lerp(start, target, time / duration);
+            yield return null;
+        }
+
+        fillImage.fillAmount = target;
     }
 }
