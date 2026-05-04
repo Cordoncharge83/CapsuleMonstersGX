@@ -27,7 +27,7 @@ public class EnemyAI : MonoBehaviour
                 continue;
             }
 
-            Unit targetPlayer = GetClosestPlayerUnit(enemy);
+            Unit targetPlayer = GetBestTarget(enemy);
 
             if (targetPlayer == null)
             {
@@ -40,7 +40,22 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
-                yield return MoveTowardPlayerCoroutine(enemy, targetPlayer);
+                Vector3Int? bestCell = GetBestAttackPosition(enemy, targetPlayer);
+
+                if (bestCell.HasValue)
+                {
+                    yield return MoveToCellCoroutine(enemy, bestCell.Value);
+                }
+                else
+                {
+                    yield return MoveTowardPlayerCoroutine(enemy, targetPlayer);
+                }
+
+                if (enemy != null && targetPlayer != null && enemy.IsInAttackRange(targetPlayer))
+                {
+                    yield return new WaitForSeconds(delayBetweenEnemyActions);
+                    yield return AttackSequence(enemy, targetPlayer);
+                }
             }
 
             yield return new WaitForSeconds(delayBetweenEnemyActions);
@@ -49,6 +64,50 @@ public class EnemyAI : MonoBehaviour
         turnManager.EndEnemyTurn();
     }
 
+    private Unit GetBestTarget(Unit enemy)
+    {
+        Unit bestTarget = null;
+        int bestScore = int.MinValue;
+
+        foreach (Unit player in playerUnits)
+        {
+            if (player == null) continue;
+
+            int score = 0;
+
+            // Distance (closer is better)
+            int distance = GetDistance(enemy, player);
+            score -= distance * 2;
+
+            // Low HP priority
+            score += (player.MaxHp - player.CurrentHp);
+
+            // Kill potential bonus
+            int damage = enemy.CalculateDamageAgainst(player);
+            if (damage >= player.CurrentHp)
+            {
+                score += 100;
+            }
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestTarget = player;
+            }
+        }
+
+        return bestTarget;
+    }
+
+    private int GetDistance(Unit a, Unit b)
+    {
+        Vector3Int aCell = a.GetCurrentCellPosition();
+        Vector3Int bCell = b.GetCurrentCellPosition();
+
+        return Mathf.Abs(aCell.x - bCell.x) + Mathf.Abs(aCell.y - bCell.y);
+    }
+
+    // for now this is useless, only here for potential debugging whilst working on EnemyAI v2
     private Unit GetClosestPlayerUnit(Unit enemy)
     {
         Unit closestPlayer = null;
@@ -76,6 +135,65 @@ public class EnemyAI : MonoBehaviour
         }
 
         return closestPlayer;
+    }
+
+    private Vector3Int? GetBestAttackPosition(Unit enemy, Unit target)
+    {
+        Vector3Int enemyCell = enemy.GetCurrentCellPosition();
+
+        Vector3Int? bestCell = null;
+        int bestDistance = int.MaxValue;
+
+        int moveRange = enemy.GetMoveRange();
+
+        for (int x = -moveRange; x <= moveRange; x++)
+        {
+            for (int y = -moveRange; y <= moveRange; y++)
+            {
+                Vector3Int candidate = enemyCell + new Vector3Int(x, y, 0);
+
+                // skip invalid tiles
+                if (!combatTilemap.HasTile(candidate)) continue;
+                if (gridManager.IsCellOccupied(candidate)) continue;
+
+                // skip cells outside movement range (diamond)
+                int distanceFromStart = Mathf.Abs(x) + Mathf.Abs(y);
+                if (distanceFromStart > moveRange) continue;
+
+                // check if from this tile we can attack target
+                if (IsCellInAttackRange(enemy, target, candidate))
+                {
+                    int distToTarget = GetDistanceFromCell(candidate, target);
+
+                    if (distToTarget < bestDistance)
+                    {
+                        bestDistance = distToTarget;
+                        bestCell = candidate;
+                    }
+                }
+            }
+        }
+
+        return bestCell;
+    }
+
+    private bool IsCellInAttackRange(Unit attacker, Unit target, Vector3Int fromCell)
+    {
+        Vector3Int targetCell = target.GetCurrentCellPosition();
+
+        int distance =
+            Mathf.Abs(fromCell.x - targetCell.x) +
+            Mathf.Abs(fromCell.y - targetCell.y);
+
+        return distance <= attacker.GetAttackRange();
+    }
+
+    private int GetDistanceFromCell(Vector3Int fromCell, Unit target)
+    {
+        Vector3Int targetCell = target.GetCurrentCellPosition();
+
+        return Mathf.Abs(fromCell.x - targetCell.x) +
+               Mathf.Abs(fromCell.y - targetCell.y);
     }
 
     private IEnumerator MoveTowardPlayerCoroutine(Unit enemy, Unit targetPlayer)
@@ -127,6 +245,16 @@ public class EnemyAI : MonoBehaviour
             {
                 yield return null;
             }
+        }
+    }
+
+    private IEnumerator MoveToCellCoroutine(Unit enemy, Vector3Int targetCell)
+    {
+        enemy.MoveTo(targetCell);
+
+        while (enemy != null && enemy.IsMoving)
+        {
+            yield return null;
         }
     }
 
