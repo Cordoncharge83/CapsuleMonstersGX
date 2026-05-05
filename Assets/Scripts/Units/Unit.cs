@@ -59,6 +59,10 @@ public class Unit : MonoBehaviour
     [SerializeField] private GridPatternType movePattern = GridPatternType.Diamond;
     [SerializeField] private GridPatternType attackPattern = GridPatternType.Diamond;
 
+    [Header("State Visuals")]
+    [SerializeField] private Color actedColor = new Color(0.55f, 0.55f, 0.55f, 1f);
+    [SerializeField] private GameObject selectionRing;
+
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
 
@@ -208,11 +212,13 @@ public class Unit : MonoBehaviour
     public void MarkActed()
     {
         actionState = ActionState.Acted;
+        UpdateActionStateVisual();
     }
 
     public void ResetTurnState()
     {
         actionState = ActionState.Ready;
+        UpdateActionStateVisual();
     }
 
     public void SetCombatTilemap(Tilemap tilemap)
@@ -277,7 +283,7 @@ public class Unit : MonoBehaviour
 
         yield return new WaitForSeconds(hitFlashDuration);
 
-        spriteRenderer.color = originalColor;
+        UpdateActionStateVisual();
     }
 
     private void ShowDamageNumber(int damage)
@@ -332,6 +338,33 @@ public class Unit : MonoBehaviour
         }
 
         transform.position = startPosition;
+    }
+
+    private void UpdateActionStateVisual()
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        switch (actionState)
+        {
+            case ActionState.Ready:
+                spriteRenderer.color = originalColor;
+                break;
+
+            case ActionState.Acted:
+                spriteRenderer.color = actedColor;
+                break;
+        }
+    }
+
+    public void SetSelectedVisual(bool selected)
+    {
+        if (selectionRing != null)
+        {
+            selectionRing.SetActive(selected);
+        }
     }
 
     private void Die()

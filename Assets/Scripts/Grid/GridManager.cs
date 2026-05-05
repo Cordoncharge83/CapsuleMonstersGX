@@ -393,7 +393,14 @@ public class GridManager : MonoBehaviour
             Debug.Log("This unit has already acted this turn.");
             return;
         }
+
+        if (selectedUnit != null)
+        {
+            selectedUnit.SetSelectedVisual(false);
+        }
+
         selectedUnit = unit;
+        selectedUnit.SetSelectedVisual(true);
         currentActionMode = ActionMode.None;
 
         highlightTilemap.ClearAllTiles();
@@ -425,6 +432,10 @@ public class GridManager : MonoBehaviour
 
     private void DeselectPlayer()
     {
+        if (selectedUnit != null)
+        {
+            selectedUnit.SetSelectedVisual(false);
+        }
         selectedUnit = null;
         currentActionMode = ActionMode.None;
         highlightTilemap.ClearAllTiles();
