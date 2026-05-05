@@ -12,6 +12,9 @@ public class UISoundManager : MonoBehaviour
     [SerializeField] private AudioClip cancelSound;
     [SerializeField] private AudioClip changeMenuSound;
 
+    [Header("Combat Sounds")]
+    [SerializeField] private AudioClip hitImpactSound;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -36,6 +39,11 @@ public class UISoundManager : MonoBehaviour
     public void PlayChangeMenu()
     {
         Play(changeMenuSound);
+    }
+
+    public void PlayHitImpact()
+    {
+        Play(hitImpactSound);
     }
 
     private void Play(AudioClip clip)

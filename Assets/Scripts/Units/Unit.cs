@@ -255,6 +255,10 @@ public class Unit : MonoBehaviour
 
         currentHp -= damage;
         currentHp = Mathf.Max(0, currentHp);
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayHitImpact();
+        }
 
         Debug.Log($"{gameObject.name} took {damage} damage. HP: {currentHp}/{maxHp}");
 

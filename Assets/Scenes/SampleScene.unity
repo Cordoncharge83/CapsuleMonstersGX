@@ -5377,6 +5377,7 @@ MonoBehaviour:
   acceptSound: {fileID: 8300000, guid: be8e3992dd43e5748a63c10064cdd67e, type: 3}
   cancelSound: {fileID: 8300000, guid: ee7cd7363a0db0b4eb8dbbe7adf07e2b, type: 3}
   changeMenuSound: {fileID: 8300000, guid: aabc96a6bbd9cf84aa3555a8a1282872, type: 3}
+  hitImpactSound: {fileID: 8300000, guid: adf2ba7c19d31ef44a37969070205aa8, type: 3}
 --- !u!4 &1415865573
 Transform:
   m_ObjectHideFlags: 0
