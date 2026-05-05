@@ -695,6 +695,7 @@ public class GridManager : MonoBehaviour
                 selectedUnit.transform.position
             );
 
+            UISoundManager.Instance.PlayCancel();
             Debug.Log("Move undone.");
             return;
         }
@@ -712,9 +713,11 @@ public class GridManager : MonoBehaviour
                 selectedUnit.transform.position
             );
 
+            UISoundManager.Instance.PlayCancel();
             return;
         }
 
+        UISoundManager.Instance.PlayCancel();
         DeselectPlayer();
     }
 
