@@ -123,8 +123,8 @@ public class ActionUI : MonoBehaviour
 
     private void ResizeBackgroundToButtons()
     {
-        float paddingX = 12f;
-        float paddingY = 12f;
+        float paddingX = 36f;
+        float paddingY = 72f;
 
         float width = LayoutUtility.GetPreferredWidth(actionPanelRect);
         float height = LayoutUtility.GetPreferredHeight(actionPanelRect);
