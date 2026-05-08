@@ -3878,7 +3878,7 @@ MonoBehaviour:
   turnIndicatorUI: {fileID: 1317624942}
   gridManager: {fileID: 454986552}
   battleResultUI: {fileID: 2137741131}
-  maxPlayerAP: 3
+  maxPlayerAP: 4
   apUI: {fileID: 907418784}
   currentTurn: 0
 --- !u!4 &548537082
@@ -4947,6 +4947,8 @@ MonoBehaviour:
   currentAPText: {fileID: 1720286389}
   gainText: {fileID: 94907109}
   fillImage: {fileID: 1797332083}
+  fillDuration: 0.35
+  numberStepDelay: 0.02
 --- !u!114 &907418785
 MonoBehaviour:
   m_ObjectHideFlags: 0
