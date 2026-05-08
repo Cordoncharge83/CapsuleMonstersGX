@@ -858,3 +858,170 @@ Strategic → Responsive → Readable → Satisfying
 - Add sound effects for actions
 - Improve UI consistency
 - Add unit state indicators (Ready / Moved / Acted)
+
+## Session 11 — UI Rework, Audio Feedback & Enemy Intent Preview
+
+### Overview
+This session focused on improving the game's overall readability, presentation quality, and tactical clarity.
+
+The goal was to push the prototype further from a functional tactical engine toward a more polished and readable game experience inspired by the original *Capsule Monster Coliseum*.
+
+---
+
+## Systems Implemented
+
+### 1. Unit Info Panel Redesign
+- Completely redesigned the Unit Info UI panels
+- Moved away from generic text-based information display
+- Introduced a structured layout inspired by the original game
+
+New panel includes:
+- Portrait display
+- Unit name
+- HP
+- ATK
+- DEF
+- AP cost
+- Movement range
+- Attack range
+- Element icon
+- Movement pattern icon
+- Attack pattern icon
+
+---
+
+### 2. Element Icon System
+- Created dedicated icons for all six elements:
+  - Fire
+  - Water
+  - Wind
+  - Earth
+  - Light
+  - Dark
+- Replaced old element-based panel tinting
+- Element identity is now represented through icons instead of full panel recoloring
+- Improved UI cohesion and readability
+
+---
+
+### 3. Pattern Icon System
+- Added movement/attack pattern icons:
+  - Cross
+  - Diagonal
+  - Diamond
+- Unit panels now visually communicate movement and attack behavior
+- Reinforces tactical readability without requiring text explanations
+
+---
+
+### 4. UI Visual Rework
+- Introduced a unified UI style and color palette
+- Reworked panel visuals to better match the GX / Capsule Monster aesthetic
+- Improved:
+  - Borders
+  - Framing
+  - Layout consistency
+  - Information hierarchy
+- Reduced visual clutter caused by element-colored panels
+
+---
+
+### 5. Selection Ring Feedback
+- Added visual selection rings beneath units
+- Selected units are now clearly readable on the battlefield
+- Added acted-state readability:
+  - Acted units become slightly dimmed
+- Prepares the game for future tactical readability improvements
+
+---
+
+### 6. UI Audio Feedback
+- Added UI sound effects:
+  - Confirm / accept
+  - Cancel / back
+  - Menu navigation
+- Connected sounds to:
+  - Action buttons
+  - UI interactions
+- Prevented cancel sound from triggering on unrelated right-clicks
+
+---
+
+### 7. Combat Impact Sound
+- Added hit impact sound effect during combat
+- Sound triggers when damage is applied
+- Integrated into attack flow for better combat feedback
+
+---
+
+### 8. AP Number Animation
+- Upgraded AP UI behavior:
+  - AP values now animate gradually instead of changing instantly
+- Example:
+  - `3 → 2 → 1 → 0`
+- AP bar fill animation and AP number animation are now synchronized
+- Greatly improves readability of AP consumption
+
+---
+
+### 9. Enemy Intent Preview System
+- Added enemy tactical previews inspired by the original *Capsule Monster Coliseum*
+
+Enemy turn flow now includes:
+- Enemy selection ring
+- Movement range preview before moving
+- Attack range preview before attacking
+
+This significantly improves:
+- Tactical readability
+- Understanding of enemy behavior
+- Enemy turn pacing
+
+---
+
+### 10. Enemy AI Refactor — Pattern-Based Movement
+- Refactored enemy movement logic to fully support:
+  - Cross movement
+  - Diagonal movement
+  - Diamond movement
+- Removed old direction-based fallback movement logic
+- Enemy AI now uses:
+  - `GridPatternUtility`
+  - Shared movement validation
+  - Shared movement execution flow
+
+Movement previews now correctly reflect actual enemy movement behavior.
+
+---
+
+## Current State
+
+The game now features:
+- Stronger UI readability
+- Improved tactical clarity
+- Better audiovisual feedback
+- More polished enemy turn presentation
+- Pattern-consistent enemy AI behavior
+
+The prototype now feels significantly closer to a complete tactical game experience.
+
+---
+
+## Known Limitations
+
+- No pathfinding system yet
+- No advanced attack VFX
+- No death animations
+- No camera feedback (shake/zoom)
+- Sound library remains minimal
+- Enemy AI still does not consider elemental advantage
+
+---
+
+## Next Steps
+
+- Continue UI polish and consistency pass
+- Add additional combat feedback
+- Improve turn transition presentation
+- Add advanced AI behaviors later
+- Begin preparing for larger-scale level structure and progression
