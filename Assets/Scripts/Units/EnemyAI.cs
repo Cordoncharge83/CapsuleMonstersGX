@@ -57,10 +57,16 @@ public class EnemyAI : MonoBehaviour
                 }
                 else
                 {
-                    gridManager.ShowMovementRange(enemy);
-                    yield return new WaitForSeconds(0.3f);
-                    gridManager.ClearHighlights();
-                    yield return MoveTowardPlayerCoroutine(enemy, targetPlayer);
+                    
+                    Vector3Int? fallbackCell = GetBestFallbackMovePosition(enemy, targetPlayer);
+
+                    if (fallbackCell.HasValue)
+                    {
+                        gridManager.ShowMovementRange(enemy);
+                        yield return new WaitForSeconds(0.3f);
+                        gridManager.ClearHighlights();
+                        yield return MoveToCellCoroutine(enemy, fallbackCell.Value);
+                    }
                 }
 
                 Unit postMoveTarget = GetBestTargetInRange(enemy);
@@ -158,58 +164,50 @@ public class EnemyAI : MonoBehaviour
     {
         Vector3Int enemyCell = enemy.GetCurrentCellPosition();
 
+        List<Vector3Int> movementCells = GridPatternUtility.GetCellsInPattern(
+            enemyCell,
+            enemy.GetMoveRange(),
+            enemy.GetMovePattern()
+        );
+
         Vector3Int? bestCell = null;
         int bestScore = int.MinValue;
 
-        int moveRange = enemy.GetMoveRange();
-
-        for (int x = -moveRange; x <= moveRange; x++)
+        foreach (Vector3Int candidate in movementCells)
         {
-            for (int y = -moveRange; y <= moveRange; y++)
+            if (!combatTilemap.HasTile(candidate))
             {
-                Vector3Int candidate = enemyCell + new Vector3Int(x, y, 0);
+                continue;
+            }
 
-                if (!combatTilemap.HasTile(candidate))
-                {
-                    continue;
-                }
+            if (gridManager.IsCellOccupied(candidate))
+            {
+                continue;
+            }
 
-                if (gridManager.IsCellOccupied(candidate))
-                {
-                    continue;
-                }
+            if (!enemy.CanMoveTo(candidate))
+            {
+                continue;
+            }
 
-                int distanceFromStart = Mathf.Abs(x) + Mathf.Abs(y);
+            if (!IsCellInAttackRange(enemy, target, candidate))
+            {
+                continue;
+            }
 
-                if (distanceFromStart > moveRange)
-                {
-                    continue;
-                }
+            int distanceFromStart = GetDistanceBetweenCells(enemyCell, candidate);
 
-                if (!IsCellInAttackRange(enemy, target, candidate))
-                {
-                    continue;
-                }
+            int score = 0;
 
-                int score = 0;
+            score -= GetDistanceFromCell(candidate, target) * 2;
+            score -= distanceFromStart;
+            score -= CountNearbyPlayerUnits(candidate) * 5;
+            score -= CountPlayerUnitsThreateningCell(candidate) * 10;
 
-                // Prefer tiles closer to the target
-                score -= GetDistanceFromCell(candidate, target) * 2;
-
-                // Prefer using less movement if options are otherwise similar
-                score -= distanceFromStart;
-
-                // Avoid standing next to multiple player units
-                score -= CountNearbyPlayerUnits(candidate) * 5;
-
-                // Avoid ending turn inside multiple player attack ranges
-                score -= CountPlayerUnitsThreateningCell(candidate) * 10;
-
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    bestCell = candidate;
-                }
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestCell = candidate;
             }
         }
 
@@ -330,56 +328,55 @@ public class EnemyAI : MonoBehaviour
         return bestTarget;
     }
 
-    private IEnumerator MoveTowardPlayerCoroutine(Unit enemy, Unit targetPlayer)
+    private Vector3Int? GetBestFallbackMovePosition(Unit enemy, Unit targetPlayer)
     {
-        for (int i = 0; i < enemy.GetMoveRange(); i++)
+        Vector3Int enemyCell = enemy.GetCurrentCellPosition();
+
+        List<Vector3Int> movementCells = GridPatternUtility.GetCellsInPattern(
+            enemyCell,
+            enemy.GetMoveRange(),
+            enemy.GetMovePattern()
+        );
+
+        Vector3Int? bestCell = null;
+        int bestScore = int.MinValue;
+
+        foreach (Vector3Int candidate in movementCells)
         {
-            if (enemy == null || targetPlayer == null)
+            if (!combatTilemap.HasTile(candidate))
             {
-                yield break;
+                continue;
             }
 
-            if (enemy.IsInAttackRange(targetPlayer))
+            if (gridManager.IsCellOccupied(candidate))
             {
-                yield break;
+                continue;
             }
 
-            Vector3Int enemyCell = enemy.GetCurrentCellPosition();
-            Vector3Int playerCell = targetPlayer.GetCurrentCellPosition();
-
-            Vector3Int direction = Vector3Int.zero;
-
-            int deltaX = playerCell.x - enemyCell.x;
-            int deltaY = playerCell.y - enemyCell.y;
-
-            if (Mathf.Abs(deltaX) > Mathf.Abs(deltaY))
+            if (!enemy.CanMoveTo(candidate))
             {
-                direction.x = deltaX > 0 ? 1 : -1;
-            }
-            else if (deltaY != 0)
-            {
-                direction.y = deltaY > 0 ? 1 : -1;
+                continue;
             }
 
-            Vector3Int targetCell = enemyCell + direction;
+            int score = 0;
 
-            if (!combatTilemap.HasTile(targetCell))
+            // Main goal: get closer to target
+            score -= GetDistanceFromCell(candidate, targetPlayer) * 10;
+
+            // Avoid standing next to multiple players
+            score -= CountNearbyPlayerUnits(candidate) * 5;
+
+            // Avoid ending in threatened cells
+            score -= CountPlayerUnitsThreateningCell(candidate) * 10;
+
+            if (score > bestScore)
             {
-                yield break;
-            }
-
-            if (gridManager.IsCellOccupied(targetCell))
-            {
-                yield break;
-            }
-
-            enemy.MoveTo(targetCell);
-
-            while (enemy != null && enemy.IsMoving)
-            {
-                yield return null;
+                bestScore = score;
+                bestCell = candidate;
             }
         }
+
+        return bestCell;
     }
 
     private IEnumerator MoveToCellCoroutine(Unit enemy, Vector3Int targetCell)
@@ -412,6 +409,11 @@ public class EnemyAI : MonoBehaviour
 
         // Small pause for readability
         yield return new WaitForSeconds(0.1f);
+    }
+
+    private int GetDistanceBetweenCells(Vector3Int a, Vector3Int b)
+    {
+        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
     }
 
     public void AddPlayerUnit(Unit unit)

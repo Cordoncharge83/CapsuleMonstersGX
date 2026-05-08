@@ -217,7 +217,7 @@ MonoBehaviour:
   hitFlashColor: {r: 0.13962269, g: 0.12407978, b: 0.12407978, a: 1}
   damageNumberPrefab: {fileID: 3379813448696997202, guid: 4dab90c4b6683ca49868946a43b73124, type: 3}
   damageNumberOffset: {x: 0, y: 0.8, z: 0}
-  movePattern: 0
-  attackPattern: 0
+  movePattern: 2
+  attackPattern: 2
   actedColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   selectionRing: {fileID: 2249991469029249251}
