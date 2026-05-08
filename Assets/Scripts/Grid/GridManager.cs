@@ -228,16 +228,16 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
-    private void ShowMovementRange()
+    public void ShowMovementRange(Unit unit)
     {
         highlightTilemap.ClearAllTiles();
 
-        Vector3Int currentPosition = selectedUnit.GetCurrentCellPosition();
+        Vector3Int currentPosition = unit.GetCurrentCellPosition();
 
         List<Vector3Int> cells = GridPatternUtility.GetCellsInPattern(
             currentPosition,
-            selectedUnit.GetMoveRange(),
-            selectedUnit.GetMovePattern()
+            unit.GetMoveRange(),
+            unit.GetMovePattern()
         );
 
         foreach (Vector3Int targetCell in cells)
@@ -258,16 +258,16 @@ public class GridManager : MonoBehaviour
         Debug.Log("Showing movement range");
     }
 
-    private void ShowAttackRange()
+    public void ShowAttackRange(Unit unit)
     {
         highlightTilemap.ClearAllTiles();
 
-        Vector3Int currentPosition = selectedUnit.GetCurrentCellPosition();
+        Vector3Int currentPosition = unit.GetCurrentCellPosition();
 
         List<Vector3Int> cells = GridPatternUtility.GetCellsInPattern(
             currentPosition,
-            selectedUnit.GetAttackRange(),
-            selectedUnit.GetAttackPattern()
+            unit.GetAttackRange(),
+            unit.GetAttackPattern()
         );
 
         foreach (Vector3Int targetCell in cells)
@@ -601,7 +601,7 @@ public class GridManager : MonoBehaviour
 
         currentActionMode = ActionMode.Move;
         highlightTilemap.ClearAllTiles();
-        ShowMovementRange();
+        ShowMovementRange(selectedUnit);
     }
 
     public void EnterAttackMode()
@@ -617,7 +617,7 @@ public class GridManager : MonoBehaviour
 
         currentActionMode = ActionMode.Attack;
         highlightTilemap.ClearAllTiles();
-        ShowAttackRange();
+        ShowAttackRange(selectedUnit);
     }
 
     public void EnterFuseMode()
@@ -773,6 +773,11 @@ public class GridManager : MonoBehaviour
         {
             turnManager.EndPlayerTurn();
         }
+    }
+
+    public void ClearHighlights()
+    {
+        highlightTilemap.ClearAllTiles();
     }
 
     public void ResetPlayerUnitsTurnState()

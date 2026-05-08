@@ -26,11 +26,15 @@ public class EnemyAI : MonoBehaviour
             {
                 continue;
             }
+            enemy.SetSelectedVisual(true);
 
             Unit targetInRange = GetBestTargetInRange(enemy);
 
             if (targetInRange != null)
             {
+                gridManager.ShowAttackRange(enemy);
+                yield return new WaitForSeconds(0.3f);
+                gridManager.ClearHighlights();
                 yield return AttackSequence(enemy, targetInRange);
             }
             else
@@ -46,10 +50,16 @@ public class EnemyAI : MonoBehaviour
 
                 if (bestCell.HasValue)
                 {
+                    gridManager.ShowMovementRange(enemy);
+                    yield return new WaitForSeconds(0.3f);
+                    gridManager.ClearHighlights();
                     yield return MoveToCellCoroutine(enemy, bestCell.Value);
                 }
                 else
                 {
+                    gridManager.ShowMovementRange(enemy);
+                    yield return new WaitForSeconds(0.3f);
+                    gridManager.ClearHighlights();
                     yield return MoveTowardPlayerCoroutine(enemy, targetPlayer);
                 }
 
@@ -58,10 +68,13 @@ public class EnemyAI : MonoBehaviour
                 if (postMoveTarget != null)
                 {
                     yield return new WaitForSeconds(delayBetweenEnemyActions);
+                    gridManager.ShowAttackRange(enemy);
+                    yield return new WaitForSeconds(0.25f);
+                    gridManager.ClearHighlights();
                     yield return AttackSequence(enemy, postMoveTarget);
                 }
             }
-
+            enemy.SetSelectedVisual(false);
             yield return new WaitForSeconds(delayBetweenEnemyActions);
         }
 
