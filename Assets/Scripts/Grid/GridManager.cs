@@ -36,9 +36,11 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Tilemap blockingTilemap;
     [SerializeField] private Tilemap highlightTilemap;
+    [SerializeField] private Tilemap deploymentHighlightTilemap;
     [SerializeField] private TileBase moveHighlightTile;
     [SerializeField] private TileBase attackHighlightTile;
     [SerializeField] private TileBase fusionHighlightTile;
+    [SerializeField] private TileBase deploymentHighlightTile;
 
     [SerializeField] private List<Unit> playerUnits;
     [SerializeField] private List<Unit> enemyUnits;
@@ -62,6 +64,7 @@ public class GridManager : MonoBehaviour
     {
         mainCamera = Camera.main;
         turnIndicatorUI.ShowPlacementPhase();
+        ShowDeploymentZone();
     }
 
     
@@ -282,6 +285,38 @@ public class GridManager : MonoBehaviour
         }
 
         Debug.Log("Showing attack range");
+    }
+
+    private void ShowDeploymentZone()
+    {
+        deploymentHighlightTilemap.ClearAllTiles();
+
+        BoundsInt bounds = combatTilemap.cellBounds;
+
+        foreach (Vector3Int cell in bounds.allPositionsWithin)
+        {
+            if (!combatTilemap.HasTile(cell))
+            {
+                continue;
+            }
+
+            if (cell.y > playerPlacementMaxY)
+            {
+                continue;
+            }
+
+            if (IsCellBlocked(cell))
+            {
+                continue;
+            }
+
+            if (IsCellOccupied(cell))
+            {
+                continue;
+            }
+
+            deploymentHighlightTilemap.SetTile(cell, deploymentHighlightTile);
+        }
     }
 
     private void TryAttackEnemy(Unit targetEnemy)
@@ -533,6 +568,7 @@ public class GridManager : MonoBehaviour
         if (!capsuleManager.HasCapsulesLeft())
         {
             Debug.Log("All units placed. Starting battle.");
+            ClearDeploymentZone();
             currentPhase = GamePhase.Battle;
             turnIndicatorUI.ShowPlayerTurn();
             return;
@@ -543,6 +579,7 @@ public class GridManager : MonoBehaviour
         if (!capsuleManager.HasCapsulesLeft())
         {
             Debug.Log("All units placed. Starting battle.");
+            ClearDeploymentZone();
             currentPhase = GamePhase.Battle;
             turnIndicatorUI.ShowPlayerTurn();
         }
@@ -790,6 +827,10 @@ public class GridManager : MonoBehaviour
     public void ClearHighlights()
     {
         highlightTilemap.ClearAllTiles();
+    }
+    private void ClearDeploymentZone()
+    {
+        deploymentHighlightTilemap.ClearAllTiles();
     }
 
     public void ResetPlayerUnitsTurnState()
