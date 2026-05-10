@@ -15,6 +15,7 @@ public class TurnManager : MonoBehaviour
 
     [Header("Action Points")]
     [SerializeField] private int maxPlayerAP = 2;
+    [SerializeField] private int maxEnemyAP = 2;
     [SerializeField] private APUI apUI;
 
     public TurnState currentTurn = TurnState.PlayerTurn;
@@ -24,6 +25,7 @@ public class TurnManager : MonoBehaviour
 
     public int CurrentPlayerAP => currentPlayerAP;
     public int MaxPlayerAP => maxPlayerAP;
+    private int currentEnemyAP;
 
     private void Start()
     {
@@ -68,6 +70,26 @@ public class TurnManager : MonoBehaviour
         Debug.Log($"Player AP restored: {currentPlayerAP}/{maxPlayerAP}");
     }
 
+    private void RestoreEnemyAP()
+    {
+        currentEnemyAP = maxEnemyAP;
+
+        Debug.Log($"Enemy AP restored: {currentEnemyAP}/{maxEnemyAP}");
+    }
+
+    public bool EnemyHasEnoughAP(int cost)
+    {
+        return currentEnemyAP >= cost;
+    }
+
+    public void EnemySpendAP(int cost)
+    {
+        currentEnemyAP -= cost;
+        currentEnemyAP = Mathf.Max(0, currentEnemyAP);
+
+        Debug.Log($"Enemy AP: {currentEnemyAP}/{maxEnemyAP}");
+    }
+
     public void EndPlayerTurn()
     {
         if (battleEnded)
@@ -78,7 +100,7 @@ public class TurnManager : MonoBehaviour
         currentTurn = TurnState.EnemyTurn;
         Debug.Log("Enemy Turn");
         turnIndicatorUI.ShowEnemyTurn();
-
+        RestoreEnemyAP();
         StartCoroutine(enemyAI.TakeTurnCoroutine());
     }
 

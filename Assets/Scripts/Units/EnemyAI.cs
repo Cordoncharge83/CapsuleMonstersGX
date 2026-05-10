@@ -24,9 +24,15 @@ public class EnemyAI : MonoBehaviour
 
         foreach (Unit enemy in enemyUnits)
         {
+       
             if (enemy == null)
             {
                 continue;
+            }
+
+            if (!turnManager.EnemyHasEnoughAP(enemy.GetActionAPCost()))
+            {
+                break;
             }
             enemy.SetSelectedVisual(true);
 
@@ -37,6 +43,7 @@ public class EnemyAI : MonoBehaviour
                 gridManager.ShowAttackRange(enemy);
                 yield return new WaitForSeconds(0.3f);
                 gridManager.ClearHighlights();
+                turnManager.EnemySpendAP(enemy.GetActionAPCost());
                 yield return AttackSequence(enemy, targetInRange);
             }
             else
@@ -55,6 +62,7 @@ public class EnemyAI : MonoBehaviour
                     gridManager.ShowMovementRange(enemy);
                     yield return new WaitForSeconds(0.3f);
                     gridManager.ClearHighlights();
+                    turnManager.EnemySpendAP(enemy.GetActionAPCost());
                     yield return MoveToCellCoroutine(enemy, bestCell.Value);
                 }
                 else
@@ -67,6 +75,7 @@ public class EnemyAI : MonoBehaviour
                         gridManager.ShowMovementRange(enemy);
                         yield return new WaitForSeconds(0.3f);
                         gridManager.ClearHighlights();
+                        turnManager.EnemySpendAP(enemy.GetActionAPCost());
                         yield return MoveToCellCoroutine(enemy, fallbackCell.Value);
                     }
                 }
