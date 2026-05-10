@@ -16,6 +16,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float startTurnDelay = 0.7f;
     [SerializeField] private float delayBetweenEnemyActions = 0.4f;
 
+    private Dictionary<Unit, Vector3Int> previousPositions = new Dictionary<Unit, Vector3Int>();
+
     public IEnumerator TakeTurnCoroutine()
     {
         yield return new WaitForSeconds(startTurnDelay);
@@ -331,6 +333,9 @@ public class EnemyAI : MonoBehaviour
     private Vector3Int? GetBestFallbackMovePosition(Unit enemy, Unit targetPlayer)
     {
         Vector3Int enemyCell = enemy.GetCurrentCellPosition();
+        Vector3Int targetCell = targetPlayer.GetCurrentCellPosition();
+
+        int currentPathDistance = GetPathDistanceTowardTarget(enemyCell, targetCell);
 
         List<Vector3Int> movementCells = GridPatternUtility.GetCellsInPattern(
             enemyCell,
@@ -358,16 +363,45 @@ public class EnemyAI : MonoBehaviour
                 continue;
             }
 
+            int candidatePathDistance = GetPathDistanceTowardTarget(candidate, targetCell);
+
+            if (candidatePathDistance == int.MaxValue)
+            {
+                continue;
+            }
+
             int score = 0;
 
-            // Main goal: get closer to target
-            score -= GetDistanceFromCell(candidate, targetPlayer) * 10;
+            // Strongly reward real path progress around obstacles
+            int progress = currentPathDistance - candidatePathDistance;
+            score += progress * 50;
 
-            // Avoid standing next to multiple players
+            if (previousPositions.TryGetValue(enemy, out Vector3Int previousPosition))
+            {
+                int previousDistance = GetPathDistanceTowardTarget(previousPosition, targetCell);
+
+                // Discourage undoing previous progress
+                if (candidatePathDistance >= previousDistance)
+                {
+                    score -= 40;
+                }
+
+                // Strongly discourage direct backtracking
+                if (candidate == previousPosition)
+                {
+                    score -= 100;
+                }
+            }
+
+            // Prefer tiles with shorter remaining path
+            score -= candidatePathDistance * 5;
+
+            // Avoid dangerous positions
             score -= CountNearbyPlayerUnits(candidate) * 5;
-
-            // Avoid ending in threatened cells
             score -= CountPlayerUnitsThreateningCell(candidate) * 10;
+
+            // Small tie-breaker: prefer using movement
+            score += GetDistanceBetweenCells(enemyCell, candidate);
 
             if (score > bestScore)
             {
@@ -381,6 +415,7 @@ public class EnemyAI : MonoBehaviour
 
     private IEnumerator MoveToCellCoroutine(Unit enemy, Vector3Int targetCell)
     {
+        previousPositions[enemy] = enemy.GetCurrentCellPosition();
         enemy.MoveTo(targetCell);
 
         while (enemy != null && enemy.IsMoving)
@@ -409,6 +444,77 @@ public class EnemyAI : MonoBehaviour
 
         // Small pause for readability
         yield return new WaitForSeconds(0.1f);
+    }
+
+    private List<Vector3Int> GetWalkableNeighbors(Vector3Int cell)
+    {
+        List<Vector3Int> neighbors = new List<Vector3Int>
+    {
+        cell + Vector3Int.up,
+        cell + Vector3Int.down,
+        cell + Vector3Int.left,
+        cell + Vector3Int.right
+    };
+
+        List<Vector3Int> validNeighbors = new List<Vector3Int>();
+
+        foreach (Vector3Int neighbor in neighbors)
+        {
+            if (!combatTilemap.HasTile(neighbor))
+            {
+                continue;
+            }
+
+            if (gridManager.IsCellBlocked(neighbor))
+            {
+                continue;
+            }
+
+            if (gridManager.IsCellOccupied(neighbor))
+            {
+                continue;
+            }
+
+            validNeighbors.Add(neighbor);
+        }
+
+        return validNeighbors;
+    }
+
+    private int GetPathDistanceTowardTarget(Vector3Int start, Vector3Int target)
+    {
+        Queue<Vector3Int> frontier = new Queue<Vector3Int>();
+        Dictionary<Vector3Int, int> distanceFromStart = new Dictionary<Vector3Int, int>();
+
+        frontier.Enqueue(start);
+        distanceFromStart[start] = 0;
+
+        int bestDistanceToTarget = GetDistanceBetweenCells(start, target);
+
+        while (frontier.Count > 0)
+        {
+            Vector3Int current = frontier.Dequeue();
+
+            int currentDistanceToTarget = GetDistanceBetweenCells(current, target);
+
+            if (currentDistanceToTarget < bestDistanceToTarget)
+            {
+                bestDistanceToTarget = currentDistanceToTarget;
+            }
+
+            foreach (Vector3Int next in GetWalkableNeighbors(current))
+            {
+                if (distanceFromStart.ContainsKey(next))
+                {
+                    continue;
+                }
+
+                distanceFromStart[next] = distanceFromStart[current] + 1;
+                frontier.Enqueue(next);
+            }
+        }
+
+        return bestDistanceToTarget;
     }
 
     private int GetDistanceBetweenCells(Vector3Int a, Vector3Int b)

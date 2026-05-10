@@ -201,7 +201,7 @@ MonoBehaviour:
   maxHp: 8
   currentHp: 8
   attackPower: 5
-  moveRange: 2
+  moveRange: 3
   attackRange: 2
   defense: 1
   unitId: Cyber Dragon
