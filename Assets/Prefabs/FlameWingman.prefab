@@ -107,12 +107,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   combatTilemap: {fileID: 0}
   currentCellPosition: {x: 1, y: -3, z: 0}
-  maxHp: 15
-  currentHp: 15
+  maxHp: 13
+  currentHp: 13
   attackPower: 5
   moveRange: 4
   attackRange: 2
-  defense: 1
+  defense: 2
   unitId: E. Hero Flame Wingman
   actionAPCost: 2
   costToSummon: 3

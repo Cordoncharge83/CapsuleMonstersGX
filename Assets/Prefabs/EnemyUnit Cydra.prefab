@@ -200,7 +200,7 @@ MonoBehaviour:
   currentCellPosition: {x: 0, y: 3, z: 0}
   maxHp: 8
   currentHp: 8
-  attackPower: 5
+  attackPower: 4
   moveRange: 3
   attackRange: 2
   defense: 1
@@ -218,6 +218,6 @@ MonoBehaviour:
   damageNumberPrefab: {fileID: 3379813448696997202, guid: 4dab90c4b6683ca49868946a43b73124, type: 3}
   damageNumberOffset: {x: 0, y: 0.8, z: 0}
   movePattern: 2
-  attackPattern: 2
+  attackPattern: 1
   actedColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   selectionRing: {fileID: 2249991469029249251}

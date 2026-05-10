@@ -107,12 +107,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   combatTilemap: {fileID: 0}
   currentCellPosition: {x: 0, y: -3, z: 0}
-  maxHp: 10
-  currentHp: 10
-  attackPower: 3
+  maxHp: 8
+  currentHp: 8
+  attackPower: 2
   moveRange: 3
   attackRange: 2
-  defense: 1
+  defense: 2
   unitId: E. Hero Clayman
   actionAPCost: 1
   costToSummon: 1
