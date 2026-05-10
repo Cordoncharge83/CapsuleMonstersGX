@@ -180,7 +180,7 @@ public class EnemyAI : MonoBehaviour
                 continue;
             }
 
-            if (gridManager.IsCellOccupied(candidate))
+            if (gridManager.IsCellOccupied(candidate) || gridManager.IsCellBlocked(candidate))
             {
                 continue;
             }
@@ -348,7 +348,7 @@ public class EnemyAI : MonoBehaviour
                 continue;
             }
 
-            if (gridManager.IsCellOccupied(candidate))
+            if (gridManager.IsCellOccupied(candidate) || gridManager.IsCellBlocked(candidate))
             {
                 continue;
             }

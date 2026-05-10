@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using UnityEngine.EventSystems;
+using UnityEngine.Tilemaps;
 
 
 public class GridManager : MonoBehaviour
@@ -34,6 +34,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private CapsuleManager capsuleManager;
 
     [SerializeField] private Tilemap combatTilemap;
+    [SerializeField] private Tilemap blockingTilemap;
     [SerializeField] private Tilemap highlightTilemap;
     [SerializeField] private TileBase moveHighlightTile;
     [SerializeField] private TileBase attackHighlightTile;
@@ -185,7 +186,7 @@ public class GridManager : MonoBehaviour
 
         if (currentActionMode == ActionMode.Move)
         {
-            if (!selectedUnit.CanMoveTo(cellPosition) || IsCellOccupied(cellPosition))
+            if (!selectedUnit.CanMoveTo(cellPosition) || IsCellOccupied(cellPosition) || IsCellBlocked(cellPosition))
             {
                 Debug.Log("Invalid move.");
                 return;
@@ -247,7 +248,7 @@ public class GridManager : MonoBehaviour
                 continue;
             }
 
-            if (IsCellOccupied(targetCell))
+            if (IsCellOccupied(targetCell) || IsCellBlocked(targetCell))
             {
                 continue;
             }
@@ -499,10 +500,21 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
+    public bool IsCellBlocked(Vector3Int cellPosition)
+    {
+        return blockingTilemap != null && blockingTilemap.HasTile(cellPosition);
+    }
+
     private void HandlePlacement(Vector3Int cellPosition)
     {
         if (!combatTilemap.HasTile(cellPosition))
         {
+            return;
+        }
+
+        if (IsCellBlocked(cellPosition))
+        {
+            Debug.Log("Cannot place unit on blocked tile.");
             return;
         }
 
