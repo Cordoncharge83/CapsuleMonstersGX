@@ -1025,3 +1025,196 @@ The prototype now feels significantly closer to a complete tactical game experie
 - Improve turn transition presentation
 - Add advanced AI behaviors later
 - Begin preparing for larger-scale level structure and progression
+
+## Session 12 — Arena Design, Terrain System & Enemy AP Economy
+
+### Overview
+This session focused on transforming the combat space from a simple prototype grid into a real tactical arena inspired by the Duel Academy battle stage from *Yu-Gi-Oh! GX*.
+
+The goal was to:
+- Introduce meaningful terrain
+- Improve battlefield readability
+- Create tactical lane-based combat
+- Upgrade enemy movement behavior
+- Introduce shared AP economy between player and enemy
+
+This marks the transition from:
+- tactical sandbox
+
+to:
+- structured tactical encounters.
+
+---
+
+## Systems Implemented
+
+### 1. Terrain Blocking System
+- Added dedicated `BlockingTilemap`
+- Introduced blocked/unwalkable terrain support
+- Units can no longer:
+  - Move onto blocked tiles
+  - Spawn onto blocked tiles
+- Shared validation now applies to:
+  - Player movement
+  - Enemy movement
+  - Placement phase
+
+New method:
+- `IsCellBlocked()`
+
+---
+
+### 2. GX Arena Blockout
+- Designed first intentional tactical arena inspired by the Duel Academy duel platform
+- Replaced rectangular prototype battlefield with:
+  - Circular/octagonal arena shape
+  - Central blocked platform
+  - Top/bottom battle entrances
+  - Structured combat lanes
+
+Arena now creates:
+- Left/right lane decisions
+- Rotational movement
+- Tactical positioning pressure
+- Natural engagement flow
+
+---
+
+### 3. Deployment Zone Visualization
+- Added visible deployment zone highlight system
+- Introduced:
+  - `DeploymentHighlightTilemap`
+- Valid placement tiles are now highlighted during placement phase
+- Highlights disappear automatically once battle begins
+
+Improves:
+- Readability
+- Clarity
+- Placement flow
+- Tactical onboarding
+
+---
+
+### 4. Terrain-Aware Enemy AI
+- Enemy AI now respects blocked terrain
+- Prevented enemies from:
+  - Moving into blocked center platform
+  - Selecting invalid terrain cells
+
+Terrain validation now applies during:
+- Attack positioning
+- Fallback movement
+- Tile evaluation
+
+---
+
+### 5. Path-Aware Enemy Movement
+- Added lightweight BFS-based terrain-aware movement evaluation
+- Enemy movement scoring now considers:
+  - Real navigable distance
+  - Terrain obstacles
+  - Path progress
+- Prevents enemies from:
+  - Getting stuck
+  - Oscillating between positions
+  - Ignoring arena geometry
+
+Enemy AI now:
+- Commits to movement lanes
+- Navigates around terrain naturally
+- Maintains positional intent
+
+---
+
+### 6. Enemy Movement Stability Improvements
+- Added movement stability logic to reduce backtracking behavior
+- Enemy AI now discourages:
+  - Undoing path progress
+  - Returning to previous positions
+  - Constant lane switching
+
+Result:
+- More readable enemy behavior
+- More natural tactical pressure
+- Better battlefield flow
+
+---
+
+### 7. Shared AP Economy (Player + Enemy)
+- Enemy side now uses Action Points
+- Enemy units consume AP using:
+  - `GetActionAPCost()`
+
+Enemy turn now ends when:
+- No enemy AP remains
+OR
+- No remaining enemy units can act
+
+This creates:
+- Tactical tempo
+- Turn prioritization
+- Meaningful action economy
+- Fairer pacing between player and enemy
+
+---
+
+### 8. Enemy AP UI
+- Added dedicated Enemy AP panel
+- Reused existing AP UI system
+- Enemy AP updates dynamically during enemy turn
+
+---
+
+### 9. Turn-Based AP Visibility
+- Player AP panel now appears only during player turn
+- Enemy AP panel now appears only during enemy turn
+
+Improves:
+- UI clarity
+- Tactical readability
+- Turn presentation
+
+---
+
+## Current State
+
+The game now features:
+- Real tactical terrain
+- Arena-based combat flow
+- Terrain-aware enemy movement
+- Stable enemy navigation
+- Shared AP economy
+- Readable deployment phase
+- Proper lane-based engagements
+
+The combat experience now feels significantly closer to:
+- a true tactical RPG
+- a modernized Capsule Monster Coliseum battle
+
+rather than a prototype grid test.
+
+---
+
+## Known Limitations
+
+- No full pathfinding system yet
+  - Current implementation is lightweight path-aware scoring
+- No terrain elevation
+- No terrain gameplay effects
+- No advanced battle presentation
+- No capsule AP economy during placement phase yet
+- AI still does not consider:
+  - Elemental advantage
+  - Fusion opportunities
+  - Advanced coordination
+
+---
+
+## Next Steps
+
+- Integrate AP economy into capsule placement phase
+- Introduce meaningful deployment prioritization
+- Build first fully intentional battle encounter:
+  - Jaden vs Zane
+- Refine encounter pacing and tactical pressure
+- Continue moving toward a polished vertical slice
