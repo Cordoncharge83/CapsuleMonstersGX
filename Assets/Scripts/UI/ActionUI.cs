@@ -15,6 +15,7 @@ public class ActionUI : MonoBehaviour
     [SerializeField] private Button fuseButton;
     [SerializeField] private Button cancelButton;
     [SerializeField] private Button finishButton;
+    [SerializeField] private Button summonButton;
 
     [SerializeField] private GridManager gridManager;
 
@@ -50,18 +51,25 @@ public class ActionUI : MonoBehaviour
             gridManager.FinishSelectedUnitAction();
         });
 
+        summonButton.onClick.AddListener(() =>
+        {
+            Hide();
+            gridManager.SummonSelectedCapsule();
+        });
+
         cancelButton.onClick.AddListener(gridManager.CancelAction);
 
         Hide();
     }
 
-    public void Show(bool canMove, bool canAttack, bool canFuse, bool canFinish, Vector3 worldPosition)
+    public void Show(bool canMove, bool canAttack, bool canFuse, bool canFinish, bool canSummon, Vector3 worldPosition)
     {
         SetPosition(worldPosition); // move while still hidden
 
         panel.SetActive(true);
 
         moveButton.gameObject.SetActive(canMove);
+        summonButton.gameObject.SetActive(canSummon);
         attackButton.gameObject.SetActive(canAttack);
         fuseButton.gameObject.SetActive(canFuse);
         finishButton.gameObject.SetActive(canFinish);

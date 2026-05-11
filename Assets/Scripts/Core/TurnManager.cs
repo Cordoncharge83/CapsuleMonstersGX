@@ -16,6 +16,7 @@ public class TurnManager : MonoBehaviour
     [Header("Action Points")]
     [SerializeField] private int maxPlayerAP = 2;
     [SerializeField] private int maxEnemyAP = 2;
+    [SerializeField] private int levelAPCap = 6;
     [SerializeField] private GameObject playerAPPanel;
     [SerializeField] private GameObject enemyAPPanel;
     [SerializeField] private APUI playerAPUI;
@@ -33,7 +34,7 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         RestorePlayerAP();
-        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP);
+        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP, levelAPCap);
         gridManager.ResetPlayerUnitsTurnState();
         UpdateAPPanelVisibility();
     }
@@ -54,11 +55,21 @@ public class TurnManager : MonoBehaviour
         return currentPlayerAP >= cost;
     }
 
+    public void IncreaseMaxPlayerAP(int amount)
+    {
+        maxPlayerAP += amount;
+        maxPlayerAP = Mathf.Min(maxPlayerAP, levelAPCap);
+
+        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP, levelAPCap);
+
+        Debug.Log($"Player max AP increased to {maxPlayerAP}. Cap: {levelAPCap}");
+    }
+
     public void SpendAP(int cost)
     {
         currentPlayerAP -= cost;
         currentPlayerAP = Mathf.Max(0, currentPlayerAP);
-        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP);
+        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP, levelAPCap);
 
         Debug.Log($"AP: {currentPlayerAP}/{maxPlayerAP}");
     }
@@ -70,20 +81,20 @@ public class TurnManager : MonoBehaviour
 
         Debug.Log($"AP refunded: {currentPlayerAP}/{maxPlayerAP}");
 
-        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP);
+        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP, levelAPCap);
     }
 
     private void RestorePlayerAP()
     {
         currentPlayerAP = maxPlayerAP;
-        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP);
+        playerAPUI.UpdateAP(currentPlayerAP, maxPlayerAP, levelAPCap);
         Debug.Log($"Player AP restored: {currentPlayerAP}/{maxPlayerAP}");
     }
 
     private void RestoreEnemyAP()
     {
         currentEnemyAP = maxEnemyAP;
-        enemyAPUI.UpdateAP(currentEnemyAP, maxEnemyAP);
+        enemyAPUI.UpdateAP(currentEnemyAP, maxEnemyAP, levelAPCap);
         Debug.Log($"Enemy AP restored: {currentEnemyAP}/{maxEnemyAP}");
     }
 
@@ -96,7 +107,7 @@ public class TurnManager : MonoBehaviour
     {
         currentEnemyAP -= cost;
         currentEnemyAP = Mathf.Max(0, currentEnemyAP);
-        enemyAPUI.UpdateAP(currentEnemyAP, maxEnemyAP);
+        enemyAPUI.UpdateAP(currentEnemyAP, maxEnemyAP, levelAPCap);
 
         Debug.Log($"Enemy AP: {currentEnemyAP}/{maxEnemyAP}");
     }

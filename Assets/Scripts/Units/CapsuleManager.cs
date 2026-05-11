@@ -8,6 +8,7 @@ public class CapsuleManager : MonoBehaviour
     [SerializeField] private List<Unit> capsuleUnitPrefabs;
     [SerializeField] private EnemyAI enemyAI;
     [SerializeField] private GridManager gridManager;
+    [SerializeField] private Capsule capsulePrefab;
 
     private int currentCapsuleIndex = 0;
 
@@ -16,25 +17,23 @@ public class CapsuleManager : MonoBehaviour
         return currentCapsuleIndex < capsuleUnitPrefabs.Count;
     }
 
-    public void PlaceNextCapsule(Vector3Int cellPosition)
+    public Capsule PlaceNextCapsule(Vector3Int cellPosition)
     {
         if (!HasCapsulesLeft())
         {
             Debug.Log("No capsules left.");
-            return;
+            return null;
         }
 
         Unit unitPrefab = capsuleUnitPrefabs[currentCapsuleIndex];
 
-        Unit spawnedUnit = Instantiate(unitPrefab);
-        spawnedUnit.SetCombatTilemap(combatTilemap);
-        spawnedUnit.SnapToCell(cellPosition);
-
-        gridManager.AddPlayerUnit(spawnedUnit);
-        enemyAI.AddPlayerUnit(spawnedUnit);
+        Capsule spawnedCapsule = Instantiate(capsulePrefab);
+        spawnedCapsule.Initialize(unitPrefab, combatTilemap, cellPosition);
 
         currentCapsuleIndex++;
 
-        Debug.Log($"Placed capsule unit: {spawnedUnit.name}");
+        Debug.Log($"Placed capsule containing: {unitPrefab.name}");
+
+        return spawnedCapsule;
     }
 }

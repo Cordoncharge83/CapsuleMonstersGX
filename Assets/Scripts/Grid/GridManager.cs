@@ -32,6 +32,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int playerPlacementMaxY = 0;
 
     [SerializeField] private CapsuleManager capsuleManager;
+    [SerializeField] private EnemyAI enemyAI;
 
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private Tilemap blockingTilemap;
@@ -42,6 +43,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TileBase fusionHighlightTile;
     [SerializeField] private TileBase deploymentHighlightTile;
 
+    [SerializeField] private List<Capsule> playerCapsules = new List<Capsule>();
     [SerializeField] private List<Unit> playerUnits;
     [SerializeField] private List<Unit> enemyUnits;
 
@@ -53,6 +55,8 @@ public class GridManager : MonoBehaviour
     // for cancelling moves 
     private Vector3Int preMoveCell;
     private bool canUndoMove;
+
+    private Capsule selectedCapsule;
 
     private Camera mainCamera;
     private ActionMode currentActionMode = ActionMode.None;
@@ -127,12 +131,19 @@ public class GridManager : MonoBehaviour
 
         Unit clickedPlayer = GetPlayerUnitAtCell(cellPosition);
         Unit clickedEnemy = GetEnemyUnitAtCell(cellPosition);
+        Capsule clickedCapsule = GetPlayerCapsuleAtCell(cellPosition);
 
         if (selectedUnit == null)
         {
             if (clickedPlayer != null)
             {
                 SelectUnit(clickedPlayer);
+                return;
+            }
+
+            if (clickedCapsule != null)
+            {
+                SelectCapsule(clickedCapsule);
                 return;
             }
 
@@ -204,6 +215,25 @@ public class GridManager : MonoBehaviour
             SelectUnit(clickedPlayer);
             return;
         }
+
+        if (clickedCapsule != null)
+        {
+            SelectCapsule(clickedCapsule);
+            return;
+        }
+    }
+
+    private Capsule GetPlayerCapsuleAtCell(Vector3Int cellPosition)
+    {
+        foreach (Capsule capsule in playerCapsules)
+        {
+            if (capsule != null && capsule.GetCurrentCellPosition() == cellPosition)
+            {
+                return capsule;
+            }
+        }
+
+        return null;
     }
 
     private Unit GetPlayerUnitAtCell(Vector3Int cellPosition)
@@ -230,6 +260,46 @@ public class GridManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void SummonSelectedCapsule()
+    {
+        if (selectedCapsule == null)
+        {
+            return;
+        }
+
+        int summonCost = selectedCapsule.GetSummonCost();
+
+        if (!turnManager.HasEnoughAP(summonCost))
+        {
+            Debug.Log("Not enough AP to summon this capsule.");
+            return;
+        }
+
+        Vector3Int cellPosition = selectedCapsule.GetCurrentCellPosition();
+        Unit unitPrefab = selectedCapsule.GetContainedUnitPrefab();
+
+        turnManager.SpendAP(summonCost);
+
+        Unit spawnedUnit = Instantiate(unitPrefab);
+        spawnedUnit.SetCombatTilemap(combatTilemap);
+        spawnedUnit.SnapToCell(cellPosition);
+
+        AddPlayerUnit(spawnedUnit);
+        enemyAI.AddPlayerUnit(spawnedUnit);
+
+        playerCapsules.Remove(selectedCapsule);
+        Destroy(selectedCapsule.gameObject);
+        selectedCapsule = null;
+
+        spawnedUnit.MarkActed();
+
+        turnManager.IncreaseMaxPlayerAP(summonCost);
+
+        actionUI.Hide();
+
+        Debug.Log($"Summoned unit: {spawnedUnit.name}");
     }
 
     public void ShowMovementRange(Unit unit)
@@ -422,6 +492,31 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    private void SelectCapsule(Capsule capsule)
+    {
+        if (selectedUnit != null)
+        {
+            selectedUnit.SetSelectedVisual(false);
+            selectedUnit = null;
+        }
+
+        selectedCapsule = capsule;
+        currentActionMode = ActionMode.None;
+
+        highlightTilemap.ClearAllTiles();
+
+        actionUI.Show(
+            false, // canMove
+            false, // canAttack
+            false, // canFuse
+            false, // canFinish
+            true,  // canSummon
+            capsule.transform.position
+        );
+
+        Debug.Log("Capsule selected.");
+    }
+
     private void SelectUnit(Unit unit)
     {
         if (!unit.CanAct())
@@ -449,6 +544,7 @@ public class GridManager : MonoBehaviour
                 HasAttackTarget(selectedUnit),
                 false, // canFuse
                 true,  // canFinish
+                false, // canSummon
                 selectedUnit.transform.position
             );
         }
@@ -459,6 +555,7 @@ public class GridManager : MonoBehaviour
                 HasAttackTarget(selectedUnit),
                 HasFusionTarget(selectedUnit),
                 false, // canFinish
+                false, // canSummon
                 selectedUnit.transform.position
             );
         }
@@ -532,6 +629,14 @@ public class GridManager : MonoBehaviour
             }
         }
 
+        foreach (Capsule capsule in playerCapsules)
+        {
+            if (capsule != null && capsule.GetCurrentCellPosition() == cellPosition)
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -574,7 +679,13 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        capsuleManager.PlaceNextCapsule(cellPosition);
+        Capsule placedCapsule = capsuleManager.PlaceNextCapsule(cellPosition);
+
+        if (placedCapsule != null)
+        {
+            playerCapsules.Add(placedCapsule);
+            ShowDeploymentZone();
+        }
 
         if (!capsuleManager.HasCapsulesLeft())
         {
@@ -716,6 +827,15 @@ public class GridManager : MonoBehaviour
 
     private void HandleCancelInput()
     {
+        if (selectedCapsule != null)
+        {
+            selectedCapsule = null;
+            actionUI.Hide();
+            highlightTilemap.ClearAllTiles();
+            UISoundManager.Instance.PlayCancel();
+            return;
+        }
+
         if (selectedUnit == null)
         {
             enemyUnitInfoUI.Hide();
@@ -741,6 +861,7 @@ public class GridManager : MonoBehaviour
                 HasAttackTarget(selectedUnit),
                 HasFusionTarget(selectedUnit),
                 false,
+                false, // canSummon
                 selectedUnit.transform.position
             );
 
@@ -759,6 +880,7 @@ public class GridManager : MonoBehaviour
                 HasAttackTarget(selectedUnit),
                 selectedUnit.HasMovedThisTurn() == false && HasFusionTarget(selectedUnit),
                 selectedUnit.HasMovedThisTurn(),
+                false, // canSummon
                 selectedUnit.transform.position
             );
 
@@ -807,6 +929,7 @@ public class GridManager : MonoBehaviour
                 true,  // canAttack
                 false, // canFuse
                 true,  // canFinish
+                false, // canSummon
                 selectedUnit.transform.position
             );
 

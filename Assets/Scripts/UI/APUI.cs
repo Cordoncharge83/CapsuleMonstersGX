@@ -21,12 +21,12 @@ public class APUI : MonoBehaviour
 
     private int displayedAP = -1;
 
-    public void UpdateAP(int currentAP, int maxAP)
+    public void UpdateAP(int currentAP, int maxAP, int apCap)
     {
         gainText.text = $"(+{maxAP})";
 
         AnimateNumber(currentAP);
-        AnimateBar(currentAP, maxAP);
+        AnimateBar(currentAP, apCap);
     }
 
     private void AnimateNumber(int targetAP)
