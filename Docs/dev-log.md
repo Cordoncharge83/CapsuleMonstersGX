@@ -1218,3 +1218,218 @@ rather than a prototype grid test.
   - Jaden vs Zane
 - Refine encounter pacing and tactical pressure
 - Continue moving toward a polished vertical slice
+
+## Session 13 — Capsule Summoning Economy & Goal-Based Enemy Pathfinding
+
+### Overview
+This session focused on transforming capsules from a simple deployment mechanic into the true core of the battle economy.
+
+The goal was to:
+- Recreate the AP growth loop from the original *Capsule Monster Coliseum*
+- Separate deployment from summoning
+- Introduce tactical summon pacing
+- Upgrade enemy AI routing from heuristic movement to goal-oriented pathfinding
+
+This marks the transition from:
+- unit deployment system
+
+to:
+- full capsule battle economy.
+
+---
+
+## Systems Implemented
+
+### 1. True Capsule Deployment Phase
+- Refactored placement phase:
+  - Players now deploy capsules instead of directly spawning units
+- Capsules remain on the battlefield until summoned
+- Units are no longer automatically active at battle start
+
+This creates:
+- Early-game setup phase
+- Summoning tempo
+- Tactical AP growth decisions
+
+---
+
+### 2. Capsule Summoning System
+- Added capsule interaction flow
+- Clicking a player capsule now:
+  - Opens unit preview
+  - Displays contained monster information
+  - Allows summoning if enough AP is available
+
+Summoning now:
+- Spawns the contained unit
+- Removes the capsule
+- Consumes AP
+- Registers the new unit into combat systems
+
+---
+
+### 3. AP Growth Economy
+- Implemented progressive AP growth inspired by the original game
+
+New flow:
+- Battle starts with low AP
+- Summoning monsters increases max AP
+- Future turns restore AP based on upgraded maximum
+
+Example:
+- Start at 2 AP
+- Summon Avian (+1 AP)
+- Next turn restores to 3 AP
+
+This creates:
+- Tempo management
+- Summon prioritization
+- Long-term economy scaling
+
+---
+
+### 4. Level AP Cap
+- Added global level AP cap system
+- Prevents AP growth from scaling infinitely
+- Shared between:
+  - Player AP
+  - Enemy AP
+
+This allows:
+- Battle pacing control
+- Encounter balancing
+- Fusion timing tuning
+
+---
+
+### 5. Capsule Preview UI
+- Unit info panel now supports capsule preview mode
+- During capsule preview:
+  - AP gain replaces ATK display
+  - UI communicates economy value instead of combat value
+
+Improves:
+- Summon readability
+- Tactical planning
+- AP economy clarity
+
+---
+
+### 6. Enemy Capsule System
+- Enemy side now also deploys capsules instead of starting with active units
+- Enemy AI can:
+  - Summon units using AP
+  - Increase max enemy AP through summoning
+  - Progress through the same economy system as the player
+
+This creates:
+- Symmetrical battle pacing
+- Shared economy rules
+- More authentic Capsule Monsters gameplay
+
+---
+
+### 7. Enemy Capsule Preview
+- Enemy capsules can now be inspected
+- Clicking enemy capsules displays:
+  - Contained monster
+  - AP gain
+  - Unit information
+
+Improves:
+- Tactical awareness
+- Readability
+- Counterplay planning
+
+---
+
+### 8. Enemy Turn Eligibility Fixes
+- Summoned enemy units now correctly:
+  - Spawn as Acted
+  - Wait until next enemy turn before acting
+- Enemy turn reset flow was corrected to:
+  - Reset existing units
+  - Keep newly summoned units inactive
+
+Prevents:
+- Immediate summon attacks
+- Unfair enemy tempo spikes
+
+---
+
+### 9. Goal-Based BFS Enemy Pathfinding
+- Replaced flawed “move scoring toward target” logic with:
+  - Goal-oriented BFS pathfinding
+
+Enemy AI now:
+- Computes real shortest-path distance toward valid attack positions
+- Evaluates:
+  - Reachable attack cells
+  - Real navigable routes
+  - Terrain-aware combat goals
+
+Previous system only measured:
+- geometric closeness
+
+New system measures:
+- actual path distance to combat engagement
+
+---
+
+### 10. Real Tactical Routing
+- Enemy movement now:
+  - Properly navigates lanes
+  - Understands flanks
+  - Reacts to blocked terrain naturally
+  - Stops orbiting or drifting toward invalid corners
+
+This was a major AI quality improvement.
+
+Enemy movement now feels:
+- intentional
+- aggressive
+- readable
+- tactically coherent
+
+---
+
+## Current State
+
+The game now features:
+- Full capsule-based economy
+- Progressive AP growth
+- Tactical summon pacing
+- Symmetrical player/enemy summon systems
+- Terrain-aware goal-based enemy routing
+- Real encounter flow and pressure
+
+The prototype now strongly resembles:
+- a modernized *Capsule Monster Coliseum* battle system
+rather than:
+- a generic tactical prototype.
+
+---
+
+## Known Limitations
+
+- No summon animations/effects yet
+- No capsule opening VFX
+- No advanced enemy coordination
+- No elemental awareness in AI
+- No fusion-aware AI behavior
+- No overworld or progression structure yet
+
+---
+
+## Next Steps
+
+- Add summon visual feedback
+- Improve battle presentation and combat juice
+- Begin intentional encounter balancing:
+  - Jaden vs Zane
+- Tune:
+  - AP pacing
+  - Fusion timing
+  - Unit costs
+  - Arena pressure
+- Prepare for eventual 3D tactical sandbox migration
