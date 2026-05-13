@@ -47,6 +47,7 @@ public class EnemyAI : MonoBehaviour
             spawnedUnit.MarkActed();
 
             AddEnemyUnit(spawnedUnit);
+            gridManager.AddEnemyUnit(spawnedUnit);
 
             turnManager.IncreaseMaxEnemyAP(summonCost);
 
