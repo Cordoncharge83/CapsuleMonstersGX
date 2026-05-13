@@ -132,6 +132,7 @@ public class GridManager : MonoBehaviour
         Unit clickedPlayer = GetPlayerUnitAtCell(cellPosition);
         Unit clickedEnemy = GetEnemyUnitAtCell(cellPosition);
         Capsule clickedCapsule = GetPlayerCapsuleAtCell(cellPosition);
+        Capsule clickedEnemyCapsule = GetEnemyCapsuleAtCell(cellPosition);
 
         if (selectedUnit == null)
         {
@@ -147,12 +148,24 @@ public class GridManager : MonoBehaviour
                 return;
             }
 
+            if (clickedEnemyCapsule != null)
+            {
+                ShowEnemyCapsulePreview(clickedEnemyCapsule);
+                return;
+            }
+
             if (clickedEnemy != null)
             {
                 enemyUnitInfoUI.Show(clickedEnemy);
                 return;
             }
 
+            return;
+        }
+
+        if (clickedEnemyCapsule != null && currentActionMode == ActionMode.None)
+        {
+            ShowEnemyCapsulePreview(clickedEnemyCapsule);
             return;
         }
 
@@ -234,6 +247,11 @@ public class GridManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    private Capsule GetEnemyCapsuleAtCell(Vector3Int cellPosition)
+    {
+        return enemyAI.GetEnemyCapsuleAtCell(cellPosition);
     }
 
     private Unit GetPlayerUnitAtCell(Vector3Int cellPosition)
@@ -564,6 +582,20 @@ public class GridManager : MonoBehaviour
         }
 
         Debug.Log("Player selected.");
+    }
+
+    private void ShowEnemyCapsulePreview(Capsule capsule)
+    {
+        if (capsule == null)
+        {
+            return;
+        }
+
+        Unit containedUnit = capsule.GetContainedUnitPrefab();
+
+        enemyUnitInfoUI.ShowCapsulePreview(containedUnit);
+
+        Debug.Log("Enemy capsule preview shown.");
     }
 
     private void DeselectPlayer()

@@ -580,6 +580,19 @@ public class EnemyAI : MonoBehaviour
         return bestDistanceToTarget;
     }
 
+    public Capsule GetEnemyCapsuleAtCell(Vector3Int cellPosition)
+    {
+        foreach (Capsule capsule in enemyCapsules)
+        {
+            if (capsule != null && capsule.GetCurrentCellPosition() == cellPosition)
+            {
+                return capsule;
+            }
+        }
+
+        return null;
+    }
+
     private void ResetEnemyUnitsTurnState()
     {
         foreach (Unit enemy in enemyUnits)
