@@ -6,6 +6,7 @@ public class EnemySetupManager : MonoBehaviour
 {
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private List<EnemySpawnData> enemySpawns;
+    [SerializeField] private Capsule capsulePrefab;
     [SerializeField] private GridManager gridManager;
     [SerializeField] private EnemyAI enemyAI;
 
@@ -18,13 +19,16 @@ public class EnemySetupManager : MonoBehaviour
     {
         foreach (EnemySpawnData spawnData in enemySpawns)
         {
-            Unit spawnedEnemy = Instantiate(spawnData.enemyPrefab);
+            Capsule spawnedCapsule = Instantiate(capsulePrefab);
 
-            spawnedEnemy.SetCombatTilemap(combatTilemap);
-            spawnedEnemy.SnapToCell(spawnData.spawnCell);
+            spawnedCapsule.Initialize(
+                spawnData.enemyPrefab,
+                combatTilemap,
+                spawnData.spawnCell,
+                Unit.Team.Enemy
+            );
 
-            gridManager.AddEnemyUnit(spawnedEnemy);
-            enemyAI.AddEnemyUnit(spawnedEnemy);
+            enemyAI.AddEnemyCapsule(spawnedCapsule);
         }
     }
 }

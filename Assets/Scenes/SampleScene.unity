@@ -160,6 +160,7 @@ MonoBehaviour:
     spawnCell: {x: -1, y: 9, z: 0}
   - enemyPrefab: {fileID: 2366910431395941468, guid: e97b151a45f5d394c9e1e82f4ba649b3, type: 3}
     spawnCell: {x: 1, y: 9, z: 0}
+  capsulePrefab: {fileID: 933228996705007632, guid: 458ae2664d43c604983acd0e0f9da51f, type: 3}
   gridManager: {fileID: 454986552}
   enemyAI: {fileID: 1369665381}
 --- !u!4 &23163335
@@ -8293,6 +8294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   enemyUnits: []
+  enemyCapsules: []
   playerUnits: []
   combatTilemap: {fileID: 1477658910}
   turnManager: {fileID: 548537081}

@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 public class EnemyAI : MonoBehaviour
 {
     [SerializeField] private List<Unit> enemyUnits;
+    [SerializeField] private List<Capsule> enemyCapsules = new List<Capsule>();
     [SerializeField] private List<Unit> playerUnits;
     [SerializeField] private Tilemap combatTilemap;
     [SerializeField] private TurnManager turnManager;
@@ -18,14 +19,67 @@ public class EnemyAI : MonoBehaviour
 
     private Dictionary<Unit, Vector3Int> previousPositions = new Dictionary<Unit, Vector3Int>();
 
+
+    private bool TrySummonEnemyCapsule()
+    {
+        foreach (Capsule capsule in enemyCapsules)
+        {
+            if (capsule == null)
+            {
+                continue;
+            }
+
+            int summonCost = capsule.GetSummonCost();
+
+            if (!turnManager.EnemyHasEnoughAP(summonCost))
+            {
+                continue;
+            }
+
+            Vector3Int cellPosition = capsule.GetCurrentCellPosition();
+            Unit unitPrefab = capsule.GetContainedUnitPrefab();
+
+            turnManager.EnemySpendAP(summonCost);
+
+            Unit spawnedUnit = Instantiate(unitPrefab);
+            spawnedUnit.SetCombatTilemap(combatTilemap);
+            spawnedUnit.SnapToCell(cellPosition);
+            spawnedUnit.MarkActed();
+
+            AddEnemyUnit(spawnedUnit);
+
+            turnManager.IncreaseMaxEnemyAP(summonCost);
+
+            enemyCapsules.Remove(capsule);
+            Destroy(capsule.gameObject);
+
+            Debug.Log($"Enemy summoned unit: {spawnedUnit.name}");
+
+            return true;
+        }
+
+        return false;
+    }
     public IEnumerator TakeTurnCoroutine()
     {
+        ResetEnemyUnitsTurnState();
+
         yield return new WaitForSeconds(startTurnDelay);
+
+        while (TrySummonEnemyCapsule())
+        {
+            yield return new WaitForSeconds(startTurnDelay);
+        }
 
         foreach (Unit enemy in enemyUnits)
         {
        
             if (enemy == null)
+            {
+                continue;
+            }
+
+            if (!enemy.CanAct())
             {
                 continue;
             }
@@ -526,6 +580,19 @@ public class EnemyAI : MonoBehaviour
         return bestDistanceToTarget;
     }
 
+    private void ResetEnemyUnitsTurnState()
+    {
+        foreach (Unit enemy in enemyUnits)
+        {
+            if (enemy == null)
+            {
+                continue;
+            }
+
+            enemy.ResetTurnState();
+        }
+    }
+
     private int GetDistanceBetweenCells(Vector3Int a, Vector3Int b)
     {
         return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
@@ -544,5 +611,10 @@ public class EnemyAI : MonoBehaviour
     public void AddEnemyUnit(Unit unit)
     {
         enemyUnits.Add(unit);
+    }
+
+    public void AddEnemyCapsule(Capsule capsule)
+    {
+        enemyCapsules.Add(capsule);
     }
 }

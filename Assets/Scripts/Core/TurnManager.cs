@@ -65,6 +65,16 @@ public class TurnManager : MonoBehaviour
         Debug.Log($"Player max AP increased to {maxPlayerAP}. Cap: {levelAPCap}");
     }
 
+    public void IncreaseMaxEnemyAP(int amount)
+    {
+        maxEnemyAP += amount;
+        maxEnemyAP = Mathf.Min(maxEnemyAP, levelAPCap);
+
+        enemyAPUI.UpdateAP(currentEnemyAP, maxEnemyAP, levelAPCap);
+
+        Debug.Log($"Enemy max AP increased to {maxEnemyAP}. Cap: {levelAPCap}");
+    }
+
     public void SpendAP(int cost)
     {
         currentPlayerAP -= cost;

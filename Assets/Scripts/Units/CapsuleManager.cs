@@ -28,7 +28,7 @@ public class CapsuleManager : MonoBehaviour
         Unit unitPrefab = capsuleUnitPrefabs[currentCapsuleIndex];
 
         Capsule spawnedCapsule = Instantiate(capsulePrefab);
-        spawnedCapsule.Initialize(unitPrefab, combatTilemap, cellPosition);
+        spawnedCapsule.Initialize(unitPrefab, combatTilemap, cellPosition, Unit.Team.Player);
 
         currentCapsuleIndex++;
 
