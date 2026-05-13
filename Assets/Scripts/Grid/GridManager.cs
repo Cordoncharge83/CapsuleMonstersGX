@@ -292,11 +292,11 @@ public class GridManager : MonoBehaviour
         playerCapsules.Remove(selectedCapsule);
         Destroy(selectedCapsule.gameObject);
         selectedCapsule = null;
-
+        
         spawnedUnit.MarkActed();
 
         turnManager.IncreaseMaxPlayerAP(summonCost);
-
+        unitInfoUI.Hide();
         actionUI.Hide();
 
         Debug.Log($"Summoned unit: {spawnedUnit.name}");
@@ -504,6 +504,9 @@ public class GridManager : MonoBehaviour
         currentActionMode = ActionMode.None;
 
         highlightTilemap.ClearAllTiles();
+
+        Unit containedUnit = capsule.GetContainedUnitPrefab();
+        unitInfoUI.ShowCapsulePreview(containedUnit);
 
         actionUI.Show(
             false, // canMove
@@ -831,6 +834,7 @@ public class GridManager : MonoBehaviour
         {
             selectedCapsule = null;
             actionUI.Hide();
+            unitInfoUI.Hide();
             highlightTilemap.ClearAllTiles();
             UISoundManager.Instance.PlayCancel();
             return;

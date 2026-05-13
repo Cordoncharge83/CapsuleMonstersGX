@@ -11,11 +11,15 @@ public class UnitInfoUI : MonoBehaviour
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text apText;
+    [SerializeField] private TMP_Text apGainText;
     [SerializeField] private TMP_Text attackText;
     [SerializeField] private TMP_Text defenseText;
     [SerializeField] private TMP_Text hpText;
     [SerializeField] private TMP_Text moveText;
     [SerializeField] private TMP_Text attackRangeText;
+
+    [SerializeField] private GameObject apGainGroup;
+    [SerializeField] private GameObject attackGroup;
 
     [Header("Images")]
     [SerializeField] private Image portraitImage;
@@ -45,6 +49,8 @@ public class UnitInfoUI : MonoBehaviour
         }
 
         panel.SetActive(true);
+        attackGroup.SetActive(true);
+        apGainGroup.SetActive(false);
 
         nameText.text = unit.UnitId;
         levelText.text = "1";
@@ -68,6 +74,16 @@ public class UnitInfoUI : MonoBehaviour
 
         attackPatternIconImage.sprite = GetPatternIcon(unit.GetAttackPattern());
         attackPatternIconImage.enabled = attackPatternIconImage.sprite != null;
+    }
+
+    public void ShowCapsulePreview(Unit unit)
+    {
+        Show(unit);
+
+        attackGroup.SetActive(false);
+        apGainGroup.SetActive(true);
+
+        apGainText.text = $"{unit.GetActionAPCost()}";
     }
 
     public void Hide()
