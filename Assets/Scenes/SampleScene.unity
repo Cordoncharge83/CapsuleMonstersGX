@@ -150,14 +150,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySetupManager
   combatTilemap: {fileID: 1477658910}
   enemySpawns:
+  - enemyPrefab: {fileID: 2366910431395941468, guid: 574db34464a4cc44f92dfca99337c2d2, type: 3}
+    spawnCell: {x: 0, y: 8, z: 0}
   - enemyPrefab: {fileID: 2366910431395941468, guid: 506cd11b675c17340970b4ed3a290cfe, type: 3}
     spawnCell: {x: 1, y: 10, z: 0}
   - enemyPrefab: {fileID: 2366910431395941468, guid: 506cd11b675c17340970b4ed3a290cfe, type: 3}
     spawnCell: {x: 0, y: 10, z: 0}
   - enemyPrefab: {fileID: 2366910431395941468, guid: 506cd11b675c17340970b4ed3a290cfe, type: 3}
     spawnCell: {x: -1, y: 10, z: 0}
-  - enemyPrefab: {fileID: 2366910431395941468, guid: 574db34464a4cc44f92dfca99337c2d2, type: 3}
-    spawnCell: {x: -1, y: 9, z: 0}
   - enemyPrefab: {fileID: 2366910431395941468, guid: e97b151a45f5d394c9e1e82f4ba649b3, type: 3}
     spawnCell: {x: 1, y: 9, z: 0}
   capsulePrefab: {fileID: 933228996705007632, guid: 458ae2664d43c604983acd0e0f9da51f, type: 3}

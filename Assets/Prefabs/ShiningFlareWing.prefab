@@ -115,7 +115,7 @@ MonoBehaviour:
   defense: 2
   unitId: E. Hero Shining Flare Wingman
   actionAPCost: 3
-  costToSummon: 5
+  costToSummon: 6
   team: 0
   elementType: 4
   portrait: {fileID: 7537104066602351945, guid: 36917731338856747b0a0f8e4778871f, type: 3}

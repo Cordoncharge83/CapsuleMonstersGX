@@ -103,14 +103,7 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
-                Unit targetPlayer = GetBestTarget(enemy);
-
-                if (targetPlayer == null)
-                {
-                    continue;
-                }
-
-                Vector3Int? bestCell = GetBestAttackPosition(enemy, targetPlayer);
+                Vector3Int? bestCell = GetBestAttackPositionAgainstAnyTarget(enemy);
 
                 if (bestCell.HasValue)
                 {
@@ -122,7 +115,12 @@ public class EnemyAI : MonoBehaviour
                 }
                 else
                 {
-                    
+                    Unit targetPlayer = GetBestTarget(enemy);
+
+                    if (targetPlayer == null)
+                    {
+                        continue;
+                    }
                     Vector3Int? fallbackCell = GetBestFallbackMovePosition(enemy, targetPlayer);
 
                     if (fallbackCell.HasValue)
@@ -260,20 +258,67 @@ public class EnemyAI : MonoBehaviour
             {
                 continue;
             }
-
             int distanceFromStart = GetDistanceBetweenCells(enemyCell, candidate);
 
             int score = 0;
-
+            score += 150;
             score -= GetDistanceFromCell(candidate, target) * 2;
-            score -= distanceFromStart;
+            //score -= distanceFromStart;
             score -= CountNearbyPlayerUnits(candidate) * 5;
-            score -= CountPlayerUnitsThreateningCell(candidate) * 10;
+            score -= CountPlayerUnitsThreateningCell(candidate) * 4;
 
             if (score > bestScore)
             {
                 bestScore = score;
                 bestCell = candidate;
+            }
+        }
+
+        return bestCell;
+    }
+
+    private Vector3Int? GetBestAttackPositionAgainstAnyTarget(Unit enemy)
+    {
+        Vector3Int? bestCell = null;
+        int bestScore = int.MinValue;
+
+        foreach (Unit player in playerUnits)
+        {
+            if (player == null)
+            {
+                continue;
+            }
+
+            Vector3Int? candidateCell = GetBestAttackPosition(enemy, player);
+
+            if (!candidateCell.HasValue)
+            {
+                continue;
+            }
+
+            int damage = enemy.CalculateDamageAgainst(player);
+
+            int score = 0;
+
+            // Prefer kills
+            if (damage >= player.CurrentHp)
+            {
+                score += 100;
+            }
+
+            // Prefer damaged / low HP targets
+            score += player.MaxHp - player.CurrentHp;
+
+            // Prefer higher damage
+            score += damage * 2;
+
+            // Prefer closer target after movement
+            score -= GetDistanceFromCell(candidateCell.Value, player) * 2;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestCell = candidateCell.Value;
             }
         }
 
@@ -399,7 +444,14 @@ public class EnemyAI : MonoBehaviour
         Vector3Int enemyCell = enemy.GetCurrentCellPosition();
         Vector3Int targetCell = targetPlayer.GetCurrentCellPosition();
 
-        int currentPathDistance = GetPathDistanceTowardTarget(enemyCell, targetCell);
+        List<Vector3Int> goalCells = GetAttackGoalCells(enemy, targetPlayer);
+
+        if (goalCells.Count == 0)
+        {
+            return null;
+        }
+
+        int currentPathDistance = GetShortestPathDistanceToAnyCell(enemyCell, goalCells);
 
         List<Vector3Int> movementCells = GridPatternUtility.GetCellsInPattern(
             enemyCell,
@@ -427,7 +479,7 @@ public class EnemyAI : MonoBehaviour
                 continue;
             }
 
-            int candidatePathDistance = GetPathDistanceTowardTarget(candidate, targetCell);
+            int candidatePathDistance = GetShortestPathDistanceToAnyCell(candidate, goalCells);
 
             if (candidatePathDistance == int.MaxValue)
             {
@@ -442,18 +494,18 @@ public class EnemyAI : MonoBehaviour
 
             if (previousPositions.TryGetValue(enemy, out Vector3Int previousPosition))
             {
-                int previousDistance = GetPathDistanceTowardTarget(previousPosition, targetCell);
+                int previousDistance = GetShortestPathDistanceToAnyCell(previousPosition, goalCells);
 
                 // Discourage undoing previous progress
                 if (candidatePathDistance >= previousDistance)
                 {
-                    score -= 40;
+                    score -= 20;
                 }
 
                 // Strongly discourage direct backtracking
                 if (candidate == previousPosition)
                 {
-                    score -= 100;
+                    score -= 50;
                 }
             }
 
@@ -467,6 +519,14 @@ public class EnemyAI : MonoBehaviour
             // Small tie-breaker: prefer using movement
             score += GetDistanceBetweenCells(enemyCell, candidate);
 
+            Debug.Log(
+                $"{enemy.UnitId} candidate {candidate} | " +
+                $"progress: {progress} | " +
+                $"pathDist: {candidatePathDistance} | " +
+                $"nearby: {CountNearbyPlayerUnits(candidate)} | " +
+                $"threat: {CountPlayerUnitsThreateningCell(candidate)} | " +
+                $"score: {score}"
+            );
             if (score > bestScore)
             {
                 bestScore = score;
@@ -545,40 +605,55 @@ public class EnemyAI : MonoBehaviour
         return validNeighbors;
     }
 
-    private int GetPathDistanceTowardTarget(Vector3Int start, Vector3Int target)
+    private int GetShortestPathDistanceToAnyCell(Vector3Int start, List<Vector3Int> goals)
     {
         Queue<Vector3Int> frontier = new Queue<Vector3Int>();
-        Dictionary<Vector3Int, int> distanceFromStart = new Dictionary<Vector3Int, int>();
+        Dictionary<Vector3Int, int> distance = new Dictionary<Vector3Int, int>();
 
         frontier.Enqueue(start);
-        distanceFromStart[start] = 0;
-
-        int bestDistanceToTarget = GetDistanceBetweenCells(start, target);
+        distance[start] = 0;
 
         while (frontier.Count > 0)
         {
             Vector3Int current = frontier.Dequeue();
 
-            int currentDistanceToTarget = GetDistanceBetweenCells(current, target);
-
-            if (currentDistanceToTarget < bestDistanceToTarget)
+            if (goals.Contains(current))
             {
-                bestDistanceToTarget = currentDistanceToTarget;
+                return distance[current];
             }
 
             foreach (Vector3Int next in GetWalkableNeighbors(current))
             {
-                if (distanceFromStart.ContainsKey(next))
+                if (distance.ContainsKey(next))
                 {
                     continue;
                 }
 
-                distanceFromStart[next] = distanceFromStart[current] + 1;
+                distance[next] = distance[current] + 1;
                 frontier.Enqueue(next);
             }
         }
 
-        return bestDistanceToTarget;
+        return int.MaxValue;
+    }
+
+    private List<Vector3Int> GetAttackGoalCells(Unit attacker, Unit target)
+    {
+        Vector3Int targetCell = target.GetCurrentCellPosition();
+
+        List<Vector3Int> goalCells = GridPatternUtility.GetCellsInPattern(
+            targetCell,
+            attacker.GetAttackRange(),
+            attacker.GetAttackPattern()
+        );
+
+        goalCells.RemoveAll(cell =>
+            !combatTilemap.HasTile(cell) ||
+            gridManager.IsCellBlocked(cell) ||
+            gridManager.IsCellOccupied(cell)
+        );
+
+        return goalCells;
     }
 
     public Capsule GetEnemyCapsuleAtCell(Vector3Int cellPosition)

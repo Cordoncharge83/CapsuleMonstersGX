@@ -115,7 +115,7 @@ MonoBehaviour:
   defense: 2
   unitId: E. Hero Flame Wingman
   actionAPCost: 2
-  costToSummon: 3
+  costToSummon: 5
   team: 0
   elementType: 2
   portrait: {fileID: -7494076391745615579, guid: 38f936f8c293a2940a3dcbb5edf07f86, type: 3}
